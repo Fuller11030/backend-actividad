@@ -15,7 +15,7 @@ router.delete('/eliminar', activityController.eliminarActividad);
 router.post('/aceptar', activityController.aceptarActividad);
 
 //obtener todas las actividades
-router.get('/todas', activityController.obtnerActividades);
+router.get('/todas', activityController.obtenerActividades);
 
 //buscar actividad por nombre
 router.get('/buscar/:nombre', activityController.buscarPorNombre);

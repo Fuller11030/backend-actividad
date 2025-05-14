@@ -3,6 +3,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
+const { Client } = require('pg');
+
 console.log("PRUEBA: HOST del .env es ->", process.env.DB_HOST);
 console.log("PRUEBA: PORT del .env es ->", process.env.DB_PORT);
 
