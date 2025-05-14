@@ -1,0 +1,124 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url('fondo.jpg')
+}
+
+header {
+    background-color: #0078E7;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.container {
+    display: flex;
+    height: calc(100vh - 80px);
+}
+
+.sidebar {
+    width: 300px;
+    background-color: #c5dff8; /*transparencia*/
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sidebar button {
+    width: 90%;
+    margin-bottom: 10px;
+    padding: 12px;
+    font-size: 14px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.main {
+    flex: 1;
+    background: linear-gradient(to bottom right);
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+input, select {
+    width: 60%;
+    padding: 8px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.buttons {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.buttons button {
+    padding: 16px 40px;
+    font-size: 18px;
+    background-color: #0078E7;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+.buttons button:last-child {
+    background-color: #0078E7;
+}
+
+.panel-central {
+    background-color: #eee;
+    border: 2px solid black;
+    padding: 50px;
+    margin: auto;
+    text-align: center;
+    width: 400px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #444;
+    border-radius: 8px;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+}
+
+.fecha {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.fecha select {
+    width: 70px;
+    padding: 4px;
+}
+
+.fecha label {
+    font-weight: bold;
+}
+
+.icono-usuario {
+    background-image: url('usuario.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+}

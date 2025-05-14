@@ -1,0 +1,82 @@
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Generar reporte</title>
+        <link rel="stylesheet" href="estilos.css">
+    </head>
+    <body>
+        <header>
+            <h1>Generar reporte</h1>
+        </header>
+
+        <div class="container">
+            <div class="sidebar">
+                <br><button onclick="location.href='admin.html'">Volever al menú</button><br>
+                <button onclick="location.href='agregar_usuario.html'">Crear nuevo usuario</button><br>
+                <button onclick="location.href='crear_actividad.html'">Crear nueva actividad</button><br>
+                <button onclick="location.href='Modificar_actividades.html'">Modificar actividades</button><br>
+                <button onclick="location.href='eliminar_actividad.html'">Eliminar actividad</button><br>
+                <button onclick="location.href='monitorear_actividad.html'">Monitorear progreso</button><br>
+                <button onclick="location.href='generar_reporte.html'">Generar reporte de actividades</button>
+            </div>
+            <div class="main">
+                <label for="actividad">Nombre de la actividad:</label>
+                <input type="text" id="actividad">
+                <br><br>
+                <div class="buttons">
+                    <button onclick="generarReportePDF()">Generar reporte</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const rol = localStorage.getItem("rol");
+      if (rol !== "administrador") {
+        alert("Acceso denegado. Solo administradores pueden generar reportes.");
+        window.location.href = "login.html";
+      }
+    });
+
+    function generarReportePDF() {
+      const actividad = document.getElementById("actividad").value.trim();
+      if (!actividad) {
+        alert("Escribe el nombre de la actividad.");
+        return;
+      }
+
+      const url = `https://tu-backend/api/reports/pdf`;
+      const body = { nombreActividad: actividad };
+
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+      })
+      .then(async (res) => {
+        if (!res.ok) {
+          const err = await res.json();
+          alert(err.mensaje || "Error al generar el reporte");
+          return;
+        }
+
+        return res.blob(); // recibir el archivo como blob
+      })
+      .then(blob => {
+        if (!blob) return;
+
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = `reporte_${actividad}.pdf`;
+        link.click();
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Error al conectar con el servidor.");
+      });
+    }
+  </script>
+    </body>
+</html>

@@ -1,0 +1,83 @@
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Monitorear progreso de actividades</title>
+        <link rel="stylesheet" href="estilos.css">
+    </head>
+    <body>
+        <header>
+            <h1>Monitorear progreso de actividades</h1>
+        </header>
+
+        <div class="container">
+            <div class="sidebar">
+                <br><button onclick="location.href='admin.html'">Volever al menú</button><br>
+                <button onclick="location.href='agregar_usuario.html'">Crear nuevo usuario</button><br>
+                <button onclick="location.href='crear_actividad.html'">Crear nueva actividad</button><br>
+                <button onclick="location.href='Modificar_actividades.html'">Modificar actividades</button><br>
+                <button onclick="location.href='eliminar_actividad.html'">Eliminar actividad</button><br>
+                <button onclick="location.href='monitorear_actividad.html'">Monitorear progreso</button><br>
+                <button onclick="location.href='generar_reporte.html'">Generar reporte de actividades</button>
+            </div>
+            <div class="main">
+                <label for="nombre">Nombre de la actividad:</label>
+                <input type="text" id="nombre">
+                <br><br>
+                <button onclick="monitorearActividad()">Consultar progreso</button>
+                <br><br>
+
+                <div id="resultado" style="display:none;">
+                    <h3>Último reporte:</h3>
+                    <p><strong>Empleado:</strong> <span id="empleado"></span></span></p>
+                    <p><strong>Fecha del reporte:</strong> <span id="fecha"></span></p>
+                    <p><strong>Progreso:</strong></p>
+                    <textarea id="conetnido" cols="80" rows="10" readonly></textarea>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const rol = localStorage.getItem("rol");
+            if (rol !== "administrador") {
+                alert("Acceso denegado. Solo administradores pueden monitorear progreso.");
+                window.location.href = "login.html";
+            }
+        });
+
+        async function monitorearActividad() {
+            const actividad = document.getElementById("actividad").value.trim();
+            if (!actividad) {
+                alert("Ingresa el nombre de la actividad.");
+                return;
+            }
+
+            try {
+                const res = await fetch("https://tu-backend/api/reports/monitorear", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ nombreActividad: actividad })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.length > 0) {
+                    const reporte = data[0];
+                    document.getElementById("empleado").innerText = reporte.empleado;
+                    document.getElementById("fecha").innerText = reporte.fecha;
+                    document.getElementById("contenido").value = reporte.contenido;
+                    document.getElementById("resultado").style.display = "block";
+                } else {
+                    alert("No se encontraron reportes para esta actividad.");
+                    document.getElementById("resultado").style.display = "none";
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Error al conectar con el servidor.");
+            }
+        }
+    </script>
+    </body>
+</html>

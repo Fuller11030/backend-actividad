@@ -1,0 +1,162 @@
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Eliminar actividad</title>
+        <link rel="stylesheet" href="estilos.css">
+    </head>
+    <body>
+        <header>
+            <h1>Eliminar actividad</h1>
+        </header>
+    
+    <div class="container">
+        <div class="sidebar">
+            <br><button onclick="location.href='admin.html'">Volver al menú</button><br>
+            <button onclick="location.href='agregar_usuario.html'">Crear nuevo usuario</button><br>
+            <button onclick="location.href='crear_actividad.html'">Crear nueva actividad</button><br>
+            <button onclick="location.href='Modificar_actividades.html'">Modificar actividades</button><br>
+            <button onclick="location.href='eliminar_actividad.html'">Eliminar actividades</button><br>
+            <button onclick="location.href='monitorear_actividad.html'">Monitorear progreso</button><br>
+            <button onclick="location.href='generar_reporte.html'">Generar reporte de actividades</button>
+        </div>
+        <div class="main">
+            <label for="actividad">Nombre de la actividad</label>
+            <input type="text" id="actividad"><br><br>
+
+            <div class="fecha">
+            <label>Dia</label>
+            <select id="dia">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option vlaue="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+                <option value="21">21</option>
+                <option value="22">22</option>
+                <option value="23">23</option>
+                <option value="24">24</option>
+                <option value="25">25</option>
+                <option value="26">26</option>
+                <option value="27">27</option>
+                <option value="28">28</option>
+                <option value="29">29</option>
+                <option value="30">30</option>
+                <option value="31">31</option>
+            </select><br>
+            
+            <label>Mes</label>
+            <select id="mes">
+                <option value="enero">Enero</option>
+                <option value="febrero">Febrero</option>
+                <option value="marzo">Marzo</option>
+                <option value="abril">Abril</option>
+                <option value="mayo">Mayo</option>
+                <option value="junio">Junio</option>
+                <option value="julio">Julio</option>
+                <option value="agosto">Agosto</option>
+                <option value="septiembre">Septiembre</option>
+                <option value="octubre">Octubre</option>
+                <option value="noviembre">Noviembre</option>
+                <option value="diciembre">Diciembre</option>
+            </select><br>
+            
+            <label>Año</label>
+            <select id="anio">
+                <option value="2000">2000</option>
+                <option value="2001">2001</option>
+                <option value="2002">2002</option>
+                <option value="2003">2003</option>
+                <option value="2004">2004</option>
+                <option value="2005">2005</option>
+                <option value="2006">2006</option>
+                <option value="2007">2007</option>
+                <option value="2008">2008</option>
+                <option value="2009">2009</option>
+                <option value="2010">2010</option>
+                <option value="2011">2011</option>
+                <option value="2012">2012</option>
+                <option value="2013">2013</option>
+                <option value="2014">2014</option>
+                <option value="2015">2015</option>
+                <option value="2016">2016</option>
+                <option value="2017">2017</option>
+                <option value="2018">2018</option>
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+            </select>
+        </div>
+        <br><br><div class="buttons">
+            <button onclick="location.reload()">Cancelar</button>
+            <button onclick="eliminarActividad()">aceptar y elimnar</button>
+        </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const rol = localStorage.getItem("rol");
+      if (rol !== "administrador") {
+        alert("Acceso denegado. Solo administradores pueden eliminar actividades.");
+        window.location.href = "login.html";
+      }
+    });
+
+    async function eliminarActividad() {
+      const nombre = document.getElementById("actividad").value.trim();
+      const dia = document.getElementById("dia").value.padStart(2, '0');
+      const mes = document.getElementById("mes").value.padStart(2, '0');
+      const anio = document.getElementById("anio").value;
+      const fecha = `${anio}-${mes}-${dia}`;
+
+      if (!nombre) {
+        alert("Debes escribir el nombre de la actividad.");
+        return;
+      }
+
+      const confirmacion = confirm(`¿Estás seguro de eliminar la actividad "${nombre}"?`);
+      if (!confirmacion) return;
+
+      try {
+        const res = await fetch("https://tu-backend/api/activities/eliminar", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ nombre, fecha })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          alert("Actividad eliminada correctamente.");
+          window.location.href = "menu_admin.html";
+        } else {
+          alert("Error: " + data.message);
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Error de conexión con el servidor.");
+      }
+    }
+  </script>
+    </body>
+</html>

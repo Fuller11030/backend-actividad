@@ -1,0 +1,42 @@
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Panel Empleado</title>
+        <link rel="stylesheet" href="estilos.css">
+        <style>
+            body {
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h2>Empleado</h2>
+        </header>
+
+        <div class="container">
+            <div class="sidebar">
+                <br><br><button onclick="redirigir('aceptar_actividades.html')">Aceptar actividad</button><br>
+                <br><button onclick="redirigir('reportar_progreso.html')">Reportar progreso de actividad</button><br>
+            </div>
+
+            <div class="main">
+                <div class="panel-central">
+                    <p>Seleccione que actividad desea realizar</p>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const idEmpleado = localStorage.getItem("idEmpleado");
+                if (!idEmpleado) {
+                    alert("Debes iniciar sesion primero.");
+                    window.location.href = pagina;
+                }
+            })
+        </script>
+    </body>
+</html>

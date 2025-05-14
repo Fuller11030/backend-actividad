@@ -1,0 +1,50 @@
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Panel Administrador</title>
+        <link rel="stylesheet" href="estilos.css">
+        <style>
+            body {
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h2>Administrador</h2>
+        </header>
+
+        <div class="container">
+            <div class="sidebar">
+                <br><button onclick="redirigir('agregar_usuario.html')">Crear nuevo usuario</button><br>
+                <button onclick="redirigir('crear_actividad.html')">Crear nueva actividad</button><br>
+                <button onclick="redirigir('Modificar_actividades.html')">Modificar actividades</button><br>
+                <button onclick="redirigir('eliminar_actividad.html')">Eliminar actividades</button><br>
+                <button onclick="redirigir('monitorear_actividad.html')">Monitorear actividades</button><br>
+                <button onclick="redirigir('generar_reporte.html')">Generar reporte de actividades</button>
+            </div>
+
+            <div class="main">
+                <div class="panel-central">
+                    <p>seleccione que actividad desea realizar</p>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventLister("DOMContentLoaded", () => {
+                const rol = localStorage.getItem("rol");
+                if (rol !== "administrador") {
+                    alert("Acceso denegado. Debes iniciar sesión como administrador.");
+                    window.location.href = "inicio_sesion.html";
+                }
+            });
+
+            function redirigir(pagina) {
+                window.location.href = pagina;
+            }
+        </script>
+    </body>
+</html>
