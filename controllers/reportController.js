@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const pool = require('../config/db');
 const PDFDocument = require('pdfkit');
 
 // Guardar un nuevo reporte (empleado)
@@ -6,7 +6,7 @@ exports.crearReporte = async (req, res) => {
   const { actividadNombre, contenido, fecha } = req.body;
 
   try{
-    const result = await db.query('SELECT id FROM actividades WHERE nombre = $1', [actividadNombre]);
+    const result = await pool.query('SELECT id FROM actividades WHERE nombre = $1', [actividadNombre]);
 
     if (result.rows.length === 0) {
       return res.status(400).json({ mensaje: 'Actividad no econtrada' });
@@ -14,14 +14,14 @@ exports.crearReporte = async (req, res) => {
 
     const actividad_id = result.rows[0].id;
 
-    await db.query(
+    await pool.query(
       'INSERT INTO reportes (actividad_id, contenido, fecha) VALUES ($1,$2, $3)',
       [actividad_id, contenido, fecha]
     );
 
     res.json({ mensaje: 'Reporte guardado correctamente' });
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).json({ mensaje: 'Error del servidor', error: err.message });
   }
 };
 
@@ -39,10 +39,10 @@ exports.monitorear = async (req, res) => {
   `;
 
   try {
-    const result = await db.query(sql, [nombreActividad]);
+    const result = await pool.query(sql, [nombreActividad]);
     res.json(result.rows);
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).json({ mensaje: 'Error del servidor', error: err.message });
   }
 };
 
@@ -61,7 +61,7 @@ exports.generarPDF = async (req, res) => {
   `;
 
   try {
-    const result = await db.query(sql, [nombreActividad]);
+    const result = await pool.query(sql, [nombreActividad]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ mensaje: 'No hay reportes disponibles' });
@@ -85,7 +85,7 @@ exports.generarPDF = async (req, res) => {
 
     doc.end();
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).json({ mensaje: 'Error del servidor', error: err.message });
   }
 };
 
@@ -104,7 +104,7 @@ exports.obtenerUltimo = async (req, res) => {
   `;
 
   try {
-    const result = await db.query(sql, [nombreActividad]);
+    const result = await pool.query(sql, [nombreActividad]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ mensaje: 'No hay reportes' });
@@ -112,7 +112,7 @@ exports.obtenerUltimo = async (req, res) => {
 
     res.json(result.rows[0]);
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).json({ mensaje: 'Error del servidor', error: err.message });
   }
 };
 
@@ -130,9 +130,9 @@ exports.obtenerTodos = async (req, res) => {
   `;
 
   try {
-    const result = await db.query(sql, [nombreActividad]);
+    const result = await pool.query(sql, [nombreActividad]);
     res.json(result.rows);
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).json({ mensaje: 'Error del servidor', error: err.message });
   }
 };

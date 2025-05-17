@@ -1,12 +1,12 @@
-const db = require('../config/db');
+const pool = require('../config/db');
 
 // Crear nueva actividad (por administrador)
 exports.crearActividad = async (req, res) => {
   const { nombre, descripcion, empleado_nombre, fecha } = req.body;
 
   try {
-    const empleadoRes = await db.query(
-      `SELECT id FROM usuarios WHERE nombre = $1 AND rol = 'Empleado'`,
+    const empleadoRes = await pool.query(
+      `SELECT id FROM usuario WHERE nombre = $1 AND rol = 'Empleado'`,
       [empleado_nombre]
     );
 
@@ -16,7 +16,7 @@ exports.crearActividad = async (req, res) => {
 
     const empleado_id = empleadoRes.rows[0].id;
 
-    await db.query(
+    await pool.query(
       `INSERT INTO actividades (nombre, descripcion, empleado_id, fecha_limite)
       VALUES ($1, $2, $3, $4)`,
       [nombre, descripcion, empleado_id, fecha]
@@ -33,7 +33,7 @@ exports.modificarActividad = async (req, res) => {
   const { nombre, nuevaDescripcion, nuevaFecha, nuevoEmpleado } = req.body;
 
   try {
-    const empleadoRes = await db.query(
+    const empleadoRes = await pool.query(
       `SELECT id FROM usuario WHERE nombre = $1 AND rol = 'Empleado'`,
       [nuevoEmpleado]
     );
@@ -44,7 +44,7 @@ exports.modificarActividad = async (req, res) => {
 
     const empleado_id = empleadoRes.rows[0].id;
 
-    await db.query(
+    await pool.query(
       `UPDATE actividades
       SET descripcion = $1, fecha_limite = $2, empleado_id = $3
       WHERE nombre = $4`,
@@ -62,7 +62,7 @@ exports.eliminarActividad = async (req, res) => {
   const { nombre, fecha } = req.body;
 
   try {
-    await db.query(
+    await pool.query(
       `DELETE FROM actividades WHERE nombre = $1 AND fecha_limite = $2`,
       [nombre, fecha]
     );
@@ -78,7 +78,7 @@ exports.aceptarActividad = async (req, res) => {
   const { nombreActividad, nombreEmpleado, fecha } = req.body;
 
   try {
-    const actividadRes = await db.query(
+    const actividadRes = await pool.query(
       `SELECT id FROM actividades WHERE nombre = $1`,
       [nombreActividad]
     );
@@ -87,7 +87,7 @@ exports.aceptarActividad = async (req, res) => {
       return res.status(400).json({ mensaje: 'Actividad no encontrada' });
     }
 
-    const empleadoRes = await db.query(
+    const empleadoRes = await pool.query(
       `SELECT id FROM usuarios WHERE nombre =$1`,
       [nombreEmpleado]
     );
@@ -96,7 +96,7 @@ exports.aceptarActividad = async (req, res) => {
       return res.status(400).json({ mensaje: 'Empleado no encotrado' });
     }
 
-    await db.query(
+    await pool.query(
       `INSERT INTO actividad_aceptada (actividad_id, empleado_id, fecha_aceptada)
       VALUES ($1, $2, $3)`,
       [actividadRes.rows[0].id, empleadoRes.rows[0].id, fecha]
@@ -111,13 +111,13 @@ exports.aceptarActividad = async (req, res) => {
 //obtener todas las actividades
 exports.obtenerActividades = async (req, res) => {
   try {
-    const result = await db.query(`
+    const result = await pool.query(`
       SELECT a.id, a.nombre, a.descripcion, a.fecha_limite, u.nombre AS empleado
       FROM actividades a
       LEFT JOIN usuarios u ON a.empleado_id = u.id
       `);
 
-      res.join(result.rows);
+      res.json(result.rows);
   } catch (err) {
     res.status(500).json({ mensaje: 'Error al obtener actividades', error: err });
   }
@@ -127,7 +127,7 @@ exports.obtenerActividades = async (req, res) => {
 exports.buscarPorNombre = async (req, res) => {
   const nombre = req.params.nombre;
    try {
-    const result = await db.query(`
+    const result = await pool.query(`
       SELECT a.id, a.nombre, a.descripcion, a.fecha_limite, u.nombre AS empleado
       FROM actividades a
       LEFT JOIN usuarios u ON a.empleado_id = u.id

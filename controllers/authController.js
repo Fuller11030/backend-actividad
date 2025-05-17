@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const pool = require('../config/db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -7,7 +7,7 @@ exports.login = async (req, res) => {
   const { usuario, contrasena } = req.body;
 
   try {
-    const result = await db.query('SELECT * FROM usuarios WHERE usuario = $1', [usuario]);
+    const result = await pool.query('SELECT * FROM usuarios WHERE usuario = $1', [usuario]);
 
     if (result.rows.length === 0) {
       return res.status(401).json({ mensaje: 'Usuario no encontrado' });
@@ -34,8 +34,8 @@ exports.login = async (req, res) => {
     });
 
   } catch (err) {
-    console.error('Error en login:', err);
-    res.status(500).json({ mensaje: 'Error del servidor' });
+    console.error('Error en login:', err.message || err);
+    res.status(500).json({ mensaje: `Error del servidor: ${err.message || 'interno'}` });
   }
 };
 

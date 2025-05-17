@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const pool = require('../config/db');
 const bcrypt = require('bcryptjs');
 
 // Registrar nuevo usuario (solo por admin)
@@ -14,10 +14,10 @@ exports.crearUsuario = async (req, res) => {
 
     const sql = `
       INSERT INTO usuarios (nombre, telefono, direccion, rol, area, usuario, contrasena)
-      VALUE ($1, $2, $3, $4, $5, $6, $7)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       `;
 
-      await db.query(sql, [nombre, telefono, direccion, rol, area, usuario, hash]);
+      await pool.query(sql, [nombre, telefono, direccion, rol, area, usuario, hash]);
 
       res.json({ mensaje: 'Usuario creado exitosamente' });
   } catch (err) {
@@ -28,7 +28,7 @@ exports.crearUsuario = async (req, res) => {
 //obtner todos los datos de los usuarios
 exports.obtenerUsuarios = async (req, res) => {
   try {
-    const result = await db.query(`
+    const result = await pool.query(`
       SELECT id, nombre, telefono, direccion, rol, area, usuario FROM usuarios
       `);
       res.json(result.rows);
@@ -42,7 +42,7 @@ exports.buscarPorNombre = async (req, res) => {
   const nombre = req.params.nombre;
   
   try {
-    const result = await db.query(`
+    const result = await pool.query(`
       SELECT id, nombre,  telefono, direccion, rol, area
       FROM usuarios
       WHERE nombre ILIKE $1
