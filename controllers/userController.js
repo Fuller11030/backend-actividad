@@ -2,42 +2,54 @@ const db = require('../config/db');
 const bcrypt = require('bcryptjs');
 
 // Registrar nuevo usuario (solo por admin)
-exports.crearUsuario = (req, res) => {
+exports.crearUsuario = async (req, res) => {
   const { nombre, telefono, direccion, rol, area, usuario, contrasena } = req.body;
 
   if (!/^\d{10}$/.test(telefono)) {
     return res.status(400).json({ mensaje: 'Teléfono inválido. Debe tener exactamente 10 dígitos.' });
   }
 
-  bcrypt.hash(contrasena, 10, (err, hash) => {
-    if (err) return res.status(500).send(err);
+  try {
+    const hash = await bcrypt.hash(contrasena, 10);
 
-    const sql = `INSERT INTO usuarios (nombre, telefono, direccion, rol, area, usuario, contrasena) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const sql = `
+      INSERT INTO usuarios (nombre, telefono, direccion, rol, area, usuario, contrasena)
+      VALUE ($1, $2, $3, $4, $5, $6, $7)
+      `;
 
-    db.query(sql, [nombre, telefono, direccion, rol, area, usuario, hash], (err, result) => {
-      if (err) return res.status(500).send(err);
+      await db.query(sql, [nombre, telefono, direccion, rol, area, usuario, hash]);
+
       res.json({ mensaje: 'Usuario creado exitosamente' });
-    });
-  });
+  } catch (err) {
+    res.status(500).send(err);
+  }
 };
 
 //obtner todos los datos de los usuarios
-exports.obtenerUsuarios = (req, res) => {
-  const sql = `SELECT id, nombre, telefono, direccion, rol, area, usuario FROM usuarios`;
-  db.query(sql, (err, results) => {
-    if (err) return res.status(500).json({ mensaje: 'Error al obtener usuarios', error: err });
-    res.json(results);
-  });
+exports.obtenerUsuarios = async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT id, nombre, telefono, direccion, rol, area, usuario FROM usuarios
+      `);
+      res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ mensaje: 'Error al obtener usuarios', error: err });
+  }
 };
 
 //buscar un usuario por nombre
-exports.buscarPorNombre = (req, res) => {
+exports.buscarPorNombre = async (req, res) => {
   const nombre = req.params.nombre;
-  const sql = `SELECT id, nombre, telefono, direccion, rol, area FROM usuarios WHERE nombre LIKE ?`;
+  
+  try {
+    const result = await db.query(`
+      SELECT id, nombre,  telefono, direccion, rol, area
+      FROM usuarios
+      WHERE nombre ILIKE $1
+      `, [`%${nombre}%`]);
 
-  db.query(sql, [`%${nombre}%`], (err, results) => {
-    if (err) return res.status(500).json({ mensaje: 'Error en la búsqueda', error: err });
-    res.json(results);
-  });
+      res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ mensaje: 'Error en la búsqueda', error: err });
+  }
 };

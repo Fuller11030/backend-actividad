@@ -1,104 +1,145 @@
 const db = require('../config/db');
 
 // Crear nueva actividad (por administrador)
-exports.crearActividad = (req, res) => {
+exports.crearActividad = async (req, res) => {
   const { nombre, descripcion, empleado_nombre, fecha } = req.body;
 
-  const buscarEmpleado = `SELECT id FROM usuarios WHERE nombre = ? AND rol = 'Empleado'`;
-  db.query(buscarEmpleado, [empleado_nombre], (err, results) => {
-    if (err) return res.status(500).send(err);
-    if (results.length === 0) return res.status(400).json({ mensaje: 'Empleado no encontrado' });
+  try {
+    const empleadoRes = await db.query(
+      `SELECT id FROM usuarios WHERE nombre = $1 AND rol = 'Empleado'`,
+      [empleado_nombre]
+    );
 
-    const empleado_id = results[0].id;
-    const sql = `INSERT INTO actividades (nombre, descripcion, empleado_id, fecha_limite)
-                 VALUES (?, ?, ?, ?)`;
+    if (empleadoRes.rows.length === 0) {
+      return res.status(400).json({ mensaje: 'Empleado no encotrado' });
+    }
 
-    db.query(sql, [nombre, descripcion, empleado_id, fecha], (err) => {
-      if (err) return res.status(500).send(err);
-      res.json({ mensaje: 'Actividad creada' });
-    });
-  });
+    const empleado_id = empleadoRes.rows[0].id;
+
+    await db.query(
+      `INSERT INTO actividades (nombre, descripcion, empleado_id, fecha_limite)
+      VALUES ($1, $2, $3, $4)`,
+      [nombre, descripcion, empleado_id, fecha]
+    );
+
+    res.json({ mensaje: 'Actividad creada' });
+  } catch (err) {
+    res.status(500).send(err);
+  }
 };
 
 // Modificar actividad
-exports.modificarActividad = (req, res) => {
+exports.modificarActividad = async (req, res) => {
   const { nombre, nuevaDescripcion, nuevaFecha, nuevoEmpleado } = req.body;
 
-  const buscarEmpleado = `SELECT id FROM usuarios WHERE nombre = ? AND rol = 'Empleado'`;
-  db.query(buscarEmpleado, [nuevoEmpleado], (err, results) => {
-    if (err) return res.status(500).send(err);
-    if (results.length === 0) return res.status(400).json({ mensaje: 'Empleado no encontrado' });
+  try {
+    const empleadoRes = await db.query(
+      `SELECT id FROM usuario WHERE nombre = $1 AND rol = 'Empleado'`,
+      [nuevoEmpleado]
+    );
 
-    const empleado_id = results[0].id;
-    const sql = `UPDATE actividades SET descripcion = ?, fecha_limite = ?, empleado_id = ? WHERE nombre = ?`;
+    if (empleadoRes.rows.length === 0) {
+      return res.status(400).json({ mensaje: 'Empleado no encontrado' });
+    }
 
-    db.query(sql, [nuevaDescripcion, nuevaFecha, empleado_id, nombre], (err) => {
-      if (err) return res.status(500).send(err);
-      res.json({ mensaje: 'Actividad modificada' });
-    });
-  });
+    const empleado_id = empleadoRes.rows[0].id;
+
+    await db.query(
+      `UPDATE actividades
+      SET descripcion = $1, fecha_limite = $2, empleado_id = $3
+      WHERE nombre = $4`,
+      [nuevaDescripcion, nuevaFecha, empleado_id, nombre]
+    );
+ 
+    res.json({ mensaje: 'Actividad modificada' });
+  } catch (err) {
+    res.status(500).send(err);
+  }
 };
 
 // Eliminar actividad
-exports.eliminarActividad = (req, res) => {
+exports.eliminarActividad = async (req, res) => {
   const { nombre, fecha } = req.body;
 
-  const sql = `DELETE FROM actividades WHERE nombre = ? AND fecha_limite = ?`;
-  db.query(sql, [nombre, fecha], (err) => {
-    if (err) return res.status(500).send(err);
-    res.json({ mensaje: 'Actividad eliminada' });
-  });
+  try {
+    await db.query(
+      `DELETE FROM actividades WHERE nombre = $1 AND fecha_limite = $2`,
+      [nombre, fecha]
+    );
+
+    res.json({ mensaje: 'Actividade eliminada' });
+  } catch (err) {
+    res.status(500).send(err);
+  }
 };
 
 // Aceptar actividad (por empleado)
-exports.aceptarActividad = (req, res) => {
+exports.aceptarActividad = async (req, res) => {
   const { nombreActividad, nombreEmpleado, fecha } = req.body;
 
-  const buscarActividad = `SELECT id FROM actividades WHERE nombre = ?`;
-  const buscarEmpleado = `SELECT id FROM usuarios WHERE nombre = ?`;
+  try {
+    const actividadRes = await db.query(
+      `SELECT id FROM actividades WHERE nombre = $1`,
+      [nombreActividad]
+    );
 
-  db.query(buscarActividad, [nombreActividad], (err, actividadRes) => {
-    if (err) return res.status(500).send(err);
-    if (actividadRes.length === 0) return res.status(400).json({ mensaje: 'Actividad no encontrada' });
+    if (actividadRes.rows.length === 0) {
+      return res.status(400).json({ mensaje: 'Actividad no encontrada' });
+    }
 
-    db.query(buscarEmpleado, [nombreEmpleado], (err, empleadoRes) => {
-      if (err) return res.status(500).send(err);
-      if (empleadoRes.length === 0) return res.status(400).json({ mensaje: 'Empleado no encontrado' });
+    const empleadoRes = await db.query(
+      `SELECT id FROM usuarios WHERE nombre =$1`,
+      [nombreEmpleado]
+    );
 
-      const sql = `INSERT INTO actividad_aceptada (actividad_id, empleado_id, fecha_aceptada) VALUES (?, ?, ?)`;
-      db.query(sql, [actividadRes[0].id, empleadoRes[0].id, fecha], (err) => {
-        if (err) return res.status(500).send(err);
-        res.json({ mensaje: 'Actividad aceptada' });
-      });
-    });
-  });
+    if (empleadoRes.rows.length === 0) {
+      return res.status(400).json({ mensaje: 'Empleado no encotrado' });
+    }
+
+    await db.query(
+      `INSERT INTO actividad_aceptada (actividad_id, empleado_id, fecha_aceptada)
+      VALUES ($1, $2, $3)`,
+      [actividadRes.rows[0].id, empleadoRes.rows[0].id, fecha]
+    );
+
+    res.json({ mensaje: 'Actividad aceptada' });
+  } catch (err) {
+    res.status(500).send(err);
+  }
 };
 
 //obtener todas las actividades
-exports.obtenerActividades = (req, res) => {
-  const sql = `
-    SELECT a.id, a.nombre, a.descripcion, a.fecha_limite, u.nombre AS empleado 
-    FROM actividades a
-    LEFT JOIN usuarios u ON a.empleado_id = u.id
-  `;
-  db.query(sql, (err, results) => {
-    if (err) return res.status(500).json({ mensaje: 'Error al obtener actividades', error: err });
-    res.json(results);
-  });
+exports.obtenerActividades = async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT a.id, a.nombre, a.descripcion, a.fecha_limite, u.nombre AS empleado
+      FROM actividades a
+      LEFT JOIN usuarios u ON a.empleado_id = u.id
+      `);
+
+      res.join(result.rows);
+  } catch (err) {
+    res.status(500).json({ mensaje: 'Error al obtener actividades', error: err });
+  }
 };
 
 //buscar actividad por nombre
-exports.buscarPorNombre = (req, res) => {
+exports.buscarPorNombre = async (req, res) => {
   const nombre = req.params.nombre;
-  const sql = `
-    SELECT a.id, a.nombre, a.descripcion, a.fecha_limite, u.nombre AS empleado
-    FROM actividades a
-    LEFT JOIN usuarios u ON a.empleado_id = u.id
-    WHERE a.nombre LIKE ?
-  `;
-  db.query(sql, [`%${nombre}%`], (err, results) => {
-    if (err) return res.status(500).json({ mensaje: 'Error al buscar actividad', error: err });
-    if (results.length === 0) return res.status(404).json({ mensaje: 'No se encontraron actividades con ese nombre' });
-    res.json(results);
-  });
+   try {
+    const result = await db.query(`
+      SELECT a.id, a.nombre, a.descripcion, a.fecha_limite, u.nombre AS empleado
+      FROM actividades a
+      LEFT JOIN usuarios u ON a.empleado_id = u.id
+      WHERE a.nombre ILIKE $1
+      `, [`%${nombre}%`]);
+
+      if (result.rows.length === 0) {
+        return res.status(404).json({ mensaje: 'No se encontraron actividades con ese nombre' });
+      }
+
+      res.json(result.rows);
+   } catch (err) {
+    res.status(500).json({ mensaje: 'Error al buscar actividad', error: err });
+   }
 };

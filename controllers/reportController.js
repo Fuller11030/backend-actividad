@@ -2,26 +2,31 @@ const db = require('../config/db');
 const PDFDocument = require('pdfkit');
 
 // Guardar un nuevo reporte (empleado)
-exports.crearReporte = (req, res) => {
+exports.crearReporte = async (req, res) => {
   const { actividadNombre, contenido, fecha } = req.body;
 
-  const buscarActividad = `SELECT id FROM actividades WHERE nombre = ?`;
-  db.query(buscarActividad, [actividadNombre], (err, results) => {
-    if (err) return res.status(500).send(err);
-    if (results.length === 0) return res.status(400).json({ mensaje: 'Actividad no encontrada' });
+  try{
+    const result = await db.query('SELECT id FROM actividades WHERE nombre = $1', [actividadNombre]);
 
-    const actividad_id = results[0].id;
-    const sql = `INSERT INTO reportes (actividad_id, contenido, fecha) VALUES (?, ?, ?)`;
+    if (result.rows.length === 0) {
+      return res.status(400).json({ mensaje: 'Actividad no econtrada' });
+    }
 
-    db.query(sql, [actividad_id, contenido, fecha], (err) => {
-      if (err) return res.status(500).send(err);
-      res.json({ mensaje: 'Reporte guardado correctamente' });
-    });
-  });
+    const actividad_id = result.rows[0].id;
+
+    await db.query(
+      'INSERT INTO reportes (actividad_id, contenido, fecha) VALUES ($1,$2, $3)',
+      [actividad_id, contenido, fecha]
+    );
+
+    res.json({ mensaje: 'Reporte guardado correctamente' });
+  } catch (err) {
+    res.status(500).send(err);
+  }
 };
 
 // Monitorear progreso (administrador)
-exports.monitorear = (req, res) => {
+exports.monitorear = async (req, res) => {
   const { nombreActividad } = req.body;
 
   const sql = `
@@ -29,18 +34,20 @@ exports.monitorear = (req, res) => {
     FROM actividades a
     LEFT JOIN usuarios u ON a.empleado_id = u.id
     LEFT JOIN reportes r ON r.actividad_id = a.id
-    WHERE a.nombre = ?
+    WHERE a.nombre = $1
     ORDER BY r.fecha DESC
   `;
 
-  db.query(sql, [nombreActividad], (err, results) => {
-    if (err) return res.status(500).send(err);
-    res.json(results);
-  });
+  try {
+    const result = await db.query(sql, [nombreActividad]);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).send(err);
+  }
 };
 
 // Generar reporte PDF (último)
-exports.generarPDF = (req, res) => {
+exports.generarPDF = async (req, res) => {
   const { nombreActividad } = req.body;
 
   const sql = `
@@ -48,16 +55,19 @@ exports.generarPDF = (req, res) => {
     FROM actividades a
     JOIN reportes r ON r.actividad_id = a.id
     JOIN usuarios u ON a.empleado_id = u.id
-    WHERE a.nombre = ?
+    WHERE a.nombre = $1
     ORDER BY r.fecha DESC
     LIMIT 1
   `;
 
-  db.query(sql, [nombreActividad], (err, results) => {
-    if (err) return res.status(500).send(err);
-    if (results.length === 0) return res.status(404).json({ mensaje: 'No hay reportes disponibles' });
+  try {
+    const result = await db.query(sql, [nombreActividad]);
 
-    const reporte = results[0];
+    if (result.rows.length === 0) {
+      return res.status(404).json({ mensaje: 'No hay reportes disponibles' });
+    }
+
+    const reporte = result.rows[0];
     const doc = new PDFDocument();
 
     res.setHeader('Content-Type', 'application/pdf');
@@ -74,11 +84,13 @@ exports.generarPDF = (req, res) => {
     doc.text(reporte.contenido);
 
     doc.end();
-  });
+  } catch (err) {
+    res.status(500).send(err);
+  }
 };
 
 //obtener el ultimo reporte (sin PDF)
-exports.obtenerUltimo = (req, res) => {
+exports.obtenerUltimo = async (req, res) => {
   const { nombreActividad } = req.body;
 
   const sql = `
@@ -86,21 +98,26 @@ exports.obtenerUltimo = (req, res) => {
     FROM actividades a
     JOIN reportes r ON r.actividad_id = a.id
     JOIN usuarios u ON a.empleado_id = u.id
-    WHERE a.nombre = ?
+    WHERE a.nombre = $1
     ORDER BY r.fecha DESC
     LIMIT 1
   `;
 
-  db.query(sql, [nombreActividad], (err, results) => {
-    if (err) return res.status(500).send(err);
-    if (results.length === 0) return res.status(404).json({ mensaje: 'No hay reportes' });
+  try {
+    const result = await db.query(sql, [nombreActividad]);
 
-    res.json(results[0]);
-  });
+    if (result.rows.length === 0) {
+      return res.status(404).json({ mensaje: 'No hay reportes' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).send(err);
+  }
 };
 
 //obtener todos los reportes de una actividad
-exports.obtenerTodos = (req, res) => {
+exports.obtenerTodos = async (req, res) => {
   const { nombreActividad } = req.body;
 
   const sql = `
@@ -108,12 +125,14 @@ exports.obtenerTodos = (req, res) => {
     FROM actividades a
     JOIN reportes r ON r.actividad_id = a.id
     JOIN usuarios u ON a.empleado_id = u.id
-    WHERE a.nombre = ?
+    WHERE a.nombre = $1
     ORDER BY r.fecha ASC
   `;
 
-  db.query(sql, [nombreActividad], (err, results) => {
-    if (err) return res.status(500).send(err);
-    res.json(results);
-  });
+  try {
+    const result = await db.query(sql, [nombreActividad]);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).send(err);
+  }
 };
