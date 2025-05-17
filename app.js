@@ -24,7 +24,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/activities', activityRoutes);
 app.use('/api/reports', reportRoutes);
 
-app.use(express.static('publci'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
