@@ -1,6 +1,6 @@
 const db = require('../config/db');
 const bcrypt = require('bcryptjs');
-const jwst = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
 // Iniciar sesión
 exports.login = (req, res) => {
@@ -18,7 +18,7 @@ exports.login = (req, res) => {
       if (!isMatch) return res.status(401).json({ mensaje: 'Contraseña incorrecta' });
 
       //generar token
-      const token = jwst.sign({ id: user.id, rol: user.rol }, process.env.JWT_SECRET, {
+      const token = jwt.sign({ id: user.id, rol: user.rol }, process.env.JWT_SECRET, {
         expiresIn: '2h',
       })
       // Redirigir según rol
@@ -26,7 +26,7 @@ exports.login = (req, res) => {
         mensaje: 'Inicio de sesión exitoso',
         rol: user.rol,
         nombre: user.nombre,
-        token,
+        token
       });
     });
   });
@@ -37,7 +37,7 @@ exports.verificarToken = (req, res) => {
   const token = req.headers['authorization'];
   if (!token) return res.status(401).json({ mensaje: 'Token no proporcioando' });
 
-  jwst.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) return res.status(401).json({ mensaje: 'Token inválido' });
     res.json({ mensaje: 'Token válido', datos: decoded });
   });

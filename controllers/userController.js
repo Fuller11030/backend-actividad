@@ -6,7 +6,7 @@ exports.crearUsuario = (req, res) => {
   const { nombre, telefono, direccion, rol, area, usuario, contrasena } = req.body;
 
   if (!/^\d{10}$/.test(telefono)) {
-    return res.status(400).json({ mensaje: 'Teléfono inválido. Deve tener exactamente 10 dígitos.' });
+    return res.status(400).json({ mensaje: 'Teléfono inválido. Debe tener exactamente 10 dígitos.' });
   }
 
   bcrypt.hash(contrasena, 10, (err, hash) => {

@@ -1,0 +1,29 @@
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Iniciar sesión</title>
+        <link rel="stylesheet" href="estilos.css">
+    </head>
+    <body>
+        <header>
+            <div class="icono-usuario"></div>
+        </header>
+        <div class="main">
+            <div class="panel-central">
+                <form id="loginForm" style="width: 100%;">
+                    <label for="usuario">Nombre de usuario:</label>
+                    <input type="text" id="usuario" name="username" required>
+
+                    <label for="contraseña">Contraseña:</label>
+                    <input type="password" id="contraseña" name="password" required>
+
+                    <div class="buttons">
+                        <button type="submit">Iniciar sesión</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script src="login.js"></script>
+    </body>
+</html>

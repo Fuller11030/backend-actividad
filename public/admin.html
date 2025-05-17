@@ -34,7 +34,7 @@
         </div>
 
         <script>
-            document.addEventLister("DOMContentLoaded", () => {
+            document.addEventListener("DOMContentLoaded", () => {
                 const rol = localStorage.getItem("rol");
                 if (rol !== "administrador") {
                     alert("Acceso denegado. Debes iniciar sesión como administrador.");

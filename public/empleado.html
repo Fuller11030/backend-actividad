@@ -34,9 +34,13 @@
                 const idEmpleado = localStorage.getItem("idEmpleado");
                 if (!idEmpleado) {
                     alert("Debes iniciar sesion primero.");
-                    window.location.href = pagina;
+                    window.location.href = "inicio_sesion.html";
                 }
-            })
+            });
+
+            function redirigir(pagina) {
+                window.location.href = pagina;
+            }
         </script>
     </body>
 </html>

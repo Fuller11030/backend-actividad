@@ -3,11 +3,11 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
-const { Client } = require('pg');
+//const { Client } = require('pg');
 
-console.log("PRUEBA: HOST del .env es ->", process.env.DB_HOST);
-console.log("PRUEBA: PORT del .env es ->", process.env.DB_PORT);
-
+//console.log("PRUEBA: HOST del .env es ->", process.env.DB_HOST);
+//console.log("PRUEBA: PORT del .env es ->", process.env.DB_PORT);
+const path = require('path');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 const activityRoutes = require('./routes/activities');
@@ -23,6 +23,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/activities', activityRoutes);
 app.use('/api/reports', reportRoutes);
+
+app.use(express.static('publci'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
