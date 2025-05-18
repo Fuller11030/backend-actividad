@@ -11,20 +11,20 @@
 
         <div class="container">
             <div class="sidebar">
-                <br><button onclick="location.herf='admin.html'">Volver al menú</button><br>
-                <button onclick="location.herf='agregar_usuario.html'">Crear nuevo usuario</button><br>
-                <button onclick="location.herf='crear_actividad.html'">Crear nueva actividad</button><br>
-                <button onclick="location.herf='Modificar_actividades.html'">Modificar actividades</button><br>
-                <button onclick="location.herf='eliminar_actividad.html'">Eliminar actividad</button><br>
-                <button onclick="location.herf='monitorear_actividad.html'">Monitorar progreso</button><br>
-                <button onclick="location.herf='generar_reporte.html'">Generar reporte de actividades</button>
+                <br><button onclick="location.href='admin.html'">Volver al menú</button><br>
+                <button onclick="location.href='agregar_usuario.html'">Crear nuevo usuario</button><br>
+                <button onclick="location.href='crear_actividad.html'">Crear nueva actividad</button><br>
+                <button onclick="location.href='Modificar_actividades.html'">Modificar actividades</button><br>
+                <button onclick="location.href='eliminar_actividad.html'">Eliminar actividad</button><br>
+                <button onclick="location.href='monitorear_actividad.html'">Monitorar progreso</button><br>
+                <button onclick="location.href='generar_reporte.html'">Generar reporte de actividades</button>
             </div>
             <div class="main">
                 <label for="actividad">Nombre de la actividad:</label>
                 <input type="text" id="actividad">
 
                 <label for="descripcion">Descripción:</label>
-                <textarea cols="80" rows="10"></textarea>
+                <textarea id="descripcion" cols="80" rows="10"></textarea>
 
             <div class="fecha">
                 <label>Dia</label>
@@ -64,18 +64,18 @@
             
             <label>Mes</label>
             <select id="mes">
-                <option value="enero">Enero</option>
-                <option value="febrero">Febrero</option>
-                <option value="marzo">Marzo</option>
-                <option value="abril">Abril</option>
-                <option value="mayo">Mayo</option>
-                <option value="junio">Junio</option>
-                <option value="julio">Julio</option>
-                <option value="agosto">Agosto</option>
-                <option value="septiembre">Septiembre</option>
-                <option value="octubre">Octubre</option>
-                <option value="noviembre">Noviembre</option>
-                <option value="diciembre">Diciembre</option>
+                <option value="1">Enero</option>
+                <option value="2">Febrero</option>
+                <option value="3">Marzo</option>
+                <option value="4">Abril</option>
+                <option value="5">Mayo</option>
+                <option value="6">Junio</option>
+                <option value="7">Julio</option>
+                <option value="8">Agosto</option>
+                <option value="9">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
             </select><br>
             
             <label>Año</label>
@@ -125,7 +125,7 @@
 
             if (!token || rol !== 'Administrador') {
                 alert('Acceso denegado. Debes iniciar sesión como administrador.');
-                window.location.herf = 'inicio_sesion.html';
+                window.location.href = 'inicio_sesion.html';
             }
         });
 
@@ -150,10 +150,10 @@
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        actividad,
-                        descripcion,
-                        fechaLimite,
-                        nombreEmpleado
+                        nombre: actividad,
+                        nuevaDescripcion: descripcion,
+                        nuevaFecha: fechaLimite,
+                        nuevoEmpleado: nombreEmpleado
                     })
                 });
 
