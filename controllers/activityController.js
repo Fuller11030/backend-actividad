@@ -1,4 +1,4 @@
-const pool = require('../config/db');
+const pool = require('../db');
 
 // Crear nueva actividad (por administrador)
 exports.crearActividad = async (req, res) => {
