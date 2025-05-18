@@ -21,7 +21,8 @@ exports.crearUsuario = async (req, res) => {
 
       res.json({ mensaje: 'Usuario creado exitosamente' });
   } catch (err) {
-    res.status(500).send(err);
+    console.error('Error al crear usuario:', err.message || err);
+    res.status(500).json({ mensaje: 'Error al crear usuario', error: err.message || err});
   }
 };
 

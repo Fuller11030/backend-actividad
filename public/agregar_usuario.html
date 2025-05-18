@@ -32,10 +32,16 @@
                 <select id="rol">
                     <option>Administrador</option>
                     <option>Empleado</option>
-                </select>
 
                 <label for="area">Área perteneciente:</label>
                 <input type="text" id="area" required>
+
+                <label for="usuario">Nombre de usuario:</label>
+                <input type="text" id="usuario" required>
+
+                <label for="contrasena">Contraseña:</label>
+                <input type="password" id="contrasena" required>
+                </select>
 
                 <div class="buttons">
                     <button onclick="crearUsuario()">Confirmar creación de usario</button>
@@ -61,9 +67,11 @@
             const direccion = document.getElementById("direccion").value.trim();
             const rol = document.getElementById("rol").value;
             const area = document.getElementById("area").value.trim();
+            const usuario = document.getElementById("usuario").value.trim();
+            const contrasena = document.getElementById("contrasena").value.trim();
 
             // Validar campos
-            if (!nombre || !telefono || !direccion || !rol || !area) {
+            if (!nombre || !telefono || !direccion || !rol || !area || !usuario || !contrasena) {
                 alert("Por favor completa todos los campos.");
                 return;
             }
@@ -84,7 +92,9 @@
                         telefono,
                         direccion,
                         rol,
-                        area
+                        area,
+                        usuario,
+                        contrasena
                     })
                 });
 
@@ -92,9 +102,9 @@
 
                 if (response.ok) {
                     alert("Usuario creado exitosamente.");
-                    window.location.href = "menu_admin.html";
+                    window.location.href = "admin.html";
                 } else {
-                    alert("Error: " + data.message);
+                    alert("Error: " + (data.message || "No se pudo crear el usuario"));
                 }
             } catch (error) {
                 console.error("Error al crear usuario:", error);
