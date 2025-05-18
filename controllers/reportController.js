@@ -1,4 +1,4 @@
-const pool = require('../db');
+const pool = require('../config/db');
 const PDFDocument = require('pdfkit');
 
 // Guardar un nuevo reporte (empleado)
