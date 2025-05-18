@@ -45,11 +45,13 @@
         </div>
 
         <script>
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOWContentLoaded", () => {
+            const token = localStorage.getItem('token');
             const rol = localStorage.getItem("rol");
-            if (rol !== "administrador") {
-                alert("Acceso denegado. Solo administradores pueden agregar usuarios.");
-                window.location.href = "login.html";
+
+            if (!token || rol !== 'Administrador') {
+                alert('Acceso denegado. Debes iniciar sesión como administrador.');
+                window.location.href = 'inicio_sesion.html'
             }
         });
 

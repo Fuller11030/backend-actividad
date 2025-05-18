@@ -120,10 +120,12 @@
 
         <script>
         document.addEventListener("DOMContentLoaded", () => {
+            const token = localStorage.getItem('token');
             const rol = localStorage.getItem("rol");
-            if (rol !== "administrador") {
-                alert("Acceso denegado. Solo administradores pueden modificar actividades.");
-                window.location.href = "login.html";
+
+            if (!token || rol !== 'Administrador') {
+                alert('Acceso denegado. Debes iniciar sesión como administrador.');
+                window.location.herf = 'inicio_sesion.html';
             }
         });
 
