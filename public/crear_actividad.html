@@ -156,12 +156,13 @@
                 });
 
                 const data = await res.json();
+                console.log("Respuesta del servidor:", data);
 
                 if (res.ok) {
                     alert("Actividad creada exitosamente.");
                     window.location.href = "menu_admin.html";
                 } else {
-                    alert("Error: " + data.message);
+                    alert("Error: " + (data.mensaje || "Ocurrió un error"));
                 }
             } catch (err) {
                 console.error("Error:", err);

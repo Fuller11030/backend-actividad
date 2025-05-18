@@ -6,7 +6,7 @@ exports.crearActividad = async (req, res) => {
 
   try {
     const empleadoRes = await pool.query(
-      `SELECT id FROM usuario WHERE nombre = $1 AND rol = 'Empleado'`,
+      `SELECT id FROM usuarios WHERE nombre = $1 AND rol = 'Empleado'`,
       [empleado_nombre]
     );
 
@@ -34,7 +34,7 @@ exports.modificarActividad = async (req, res) => {
 
   try {
     const empleadoRes = await pool.query(
-      `SELECT id FROM usuario WHERE nombre = $1 AND rol = 'Empleado'`,
+      `SELECT id FROM usuarios WHERE nombre = $1 AND rol = 'Empleado'`,
       [nuevoEmpleado]
     );
 
