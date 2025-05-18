@@ -15,6 +15,12 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
         if (response.ok) {
             alert('Inicio de sesión exitoso');
+
+            //guardar token y rol en localStorage
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('rol', data.rol);
+
+            //redireccionar segun el rol
             if (data.rol === 'Administrador') {
                 window.location.href = 'admin.html';
             } else if (data.rol === 'Empleado') {

@@ -35,10 +35,12 @@
 
         <script>
             document.addEventListener("DOMContentLoaded", () => {
+                const token = localStorage.getItem('token');
                 const rol = localStorage.getItem("rol");
-                if (rol !== "administrador") {
-                    alert("Acceso denegado. Debes iniciar sesión como administrador.");
-                    window.location.href = "inicio_sesion.html";
+                
+                if (!token || rol !== 'Administrador') {
+                    alert('Acceso denegado. Debes iniciar sesión como administrador.');
+                    window.location.href = 'inicio_sesion.html';
                 }
             });
 

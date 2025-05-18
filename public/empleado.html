@@ -31,8 +31,10 @@
 
         <script>
             document.addEventListener("DOMContentLoaded", () => {
-                const idEmpleado = localStorage.getItem("idEmpleado");
-                if (!idEmpleado) {
+                const token = localStorage.getItem("token");
+                const rol = localStorage.getItem('rol');
+
+                if (!token || rol !== 'Empleado') {
                     alert("Debes iniciar sesion primero.");
                     window.location.href = "inicio_sesion.html";
                 }
