@@ -122,6 +122,7 @@ exports.obtenerPorEmpleado = async (req, res) => {
 
       res.json(result.rows);
   } catch (err) {
+    console.error("Error al obtener actividades del empleado:", err.message || err);
     res.status(500).json({ mensaje: 'Error al obtener actividades', error: err.message });
   }
 };
