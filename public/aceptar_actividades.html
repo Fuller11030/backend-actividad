@@ -21,17 +21,20 @@
 
         <script>
             document.addEventListener("DOMContentLoaded", async () => {
+                const token = localStorage.getItem("token");
                 const nombre = localStorage.getItem("nombre");
-                if (!nombre) {
-                    alert("No has iniciado sesión");
-                    return location.href = "inicio_sesion.html"
+                const rol = localStorage.getItem("rol");
+
+                if (!token || nombre || rol !== "Empleado") {
+                    alert("No has iniciado sesión como empleado.");
+                    return location.href = "inicio_sesion.html";
                 }
 
                 try {
                     const response = await fetch("https://backend-actividad-fvub.onrender.com/api/activities/por-empleado", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringity({ nombreEmpleado: nombre })
+                        body: JSON.stringify({ nombreEmpleado: nombre })
                     });
 
                     const actividades = await response.json();
@@ -39,7 +42,7 @@
                     contenedor.innerHTML = "";
 
                     if (actividades.length === 0) {
-                        contenedor.innerHTML = "<p>No tienes actividades asignadas.<p>";
+                        contenedor.innerHTML = "<p>No tienes actividades asignadas.</p>";
                             return;
                     }
 
