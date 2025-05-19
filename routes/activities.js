@@ -20,4 +20,6 @@ router.get('/todas', activityController.obtenerActividades);
 //buscar actividad por nombre
 router.get('/buscar/:nombre', activityController.buscarPorNombre);
 
+router.post('/por-empleado', activityController.obtenerPorEmpleado);
+
 module.exports = router;

@@ -108,6 +108,24 @@ exports.aceptarActividad = async (req, res) => {
   }
 };
 
+//obtener actividad asignada por empleado
+exports.obtenerPorEmpleado = async (req, res) => {
+  const { nombreEmpleado } = req.body;
+
+  try {
+    const result = await pool.query(`
+      SELECT a.nombre, a.descripcion, a.fecha_limite
+      FROM actividades a
+      JOIN usuarios u ON a.empleado_id = u.id
+      WHERE u.nombre = $1
+      `, [nombreEmpleado]);
+
+      res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ mensaje: 'Error al obtener actividades', error: err.message });
+  }
+};
+
 //obtener todas las actividades
 exports.obtenerActividades = async (req, res) => {
   try {
