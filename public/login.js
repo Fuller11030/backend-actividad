@@ -19,6 +19,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
             //guardar token y rol en localStorage
             localStorage.setItem('token', data.token);
             localStorage.setItem('rol', data.rol);
+            localStorage.setItem('nombre', data.name);
 
             //redireccionar segun el rol
             if (data.rol === 'Administrador') {

@@ -25,7 +25,7 @@
                 const nombre = localStorage.getItem("nombre");
                 const rol = localStorage.getItem("rol");
 
-                if (!token || nombre || rol !== "Empleado") {
+                if (!token || !nombre || rol !== "Empleado") {
                     alert("No has iniciado sesión como empleado.");
                     return location.href = "inicio_sesion.html";
                 }
