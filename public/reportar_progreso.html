@@ -11,7 +11,7 @@
         <div class="container">
             <div class="sidebar">
                 <br><button onclick="location.href='empleado.html'">Volver al menú</button><br>
-                <button onclick="location.herf='aceptar_actividades.html'">Aceptar actividad</button><br>
+                <button onclick="location.href='aceptar_actividades.html'">Aceptar actividad</button><br>
                 <button onclick="location.href='reportar_progreso.html'">Reportar progreso de actividad</button><br>
             </div>
             <div class="main">
@@ -19,12 +19,12 @@
                 <input type="text" id="actividad" required>
 
                 <label for="progreso">Escribir el progreso:</label>
-                <textarea cols="80" rows="10" required></textarea>
+                <textarea id="progreso" cols="80" rows="10" required></textarea>
 
                 <br><br>Fecha de reporte:
                 <div class="fecha">
                     <label>Dia</label>
-                    <select dia="dia">
+                    <select id="dia">
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -60,18 +60,18 @@
             
                     <label>Mes</label>
                     <select id="mes">
-                        <option value="enero">Enero</option>
-                        <option value="febrero">Febrero</option>
-                        <option value="marzo">Marzo</option>
-                        <option value="abril">Abril</option>
-                        <option value="mayo">Mayo</option>
-                        <option value="junio">Junio</option>
-                        <option value="julio">Julio</option>
-                        <option value="agosto">Agosto</option>
-                        <option value="septiembre">Septiembre</option>
-                        <option value="octubre">Octubre</option>
-                        <option value="noviembre">Noviembre</option>
-                        <option value="diciembre">Diciembre</option>
+                        <option value="01">Enero</option>
+                        <option value="02">Febrero</option>
+                        <option value="03">Marzo</option>
+                        <option value="04">Abril</option>
+                        <option value="05">Mayo</option>
+                        <option value="06">Junio</option>
+                        <option value="07">Julio</option>
+                        <option value="08">Agosto</option>
+                        <option value="09">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
                     </select><br>
             
                     <label>Año</label>
