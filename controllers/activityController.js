@@ -60,18 +60,18 @@ exports.modificarActividad = async (req, res) => {
 // Eliminar actividad
 exports.eliminarActividad = async (req, res) => {
   console.log("Datos recibidos para eliminar:", req.body);
-  const { nombre, fecha } = req.body;
+  const { nombre } = req.body;
 
   try {
     const result = await pool.query(
-      `DELETE FROM actividades WHERE nombre = $1 AND DATE fecha_limite::DATE = $2::DATE`,
-      [nombre, fecha]
+      `DELETE FROM actividades WHERE nombre = $1`,
+      [nombre]
     );
 
     console.log("Filas eliminadas:", result.rowCount);
 
     if (result.rowCount === 0) {
-      return res.status(404).json({ mensaje: "No se encontró la actividad con esa fecha" });
+      return res.status(404).json({ mensaje: "No se encontró la actividad con ese nombre" });
     }
 
     res.json({ mensaje: 'Actividad eliminada correctamente' });
