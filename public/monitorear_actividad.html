@@ -31,7 +31,7 @@
                     <p><strong>Empleado:</strong> <span id="empleado"></span></span></p>
                     <p><strong>Fecha del reporte:</strong> <span id="fecha"></span></p>
                     <p><strong>Progreso:</strong></p>
-                    <textarea id="conetnido" cols="80" rows="10" readonly></textarea>
+                    <textarea id="contenido" cols="80" rows="10" readonly></textarea>
                 </div>
             </div>
         </div>
@@ -48,7 +48,7 @@
         });
 
         async function monitorearActividad() {
-            const actividad = document.getElementById("actividad").value.trim();
+            const actividad = document.getElementById("nombre").value.trim();
             if (!actividad) {
                 alert("Ingresa el nombre de la actividad.");
                 return;
