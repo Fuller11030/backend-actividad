@@ -61,18 +61,18 @@
             
             <label>Mes</label>
             <select id="mes">
-                <option value="enero">Enero</option>
-                <option value="febrero">Febrero</option>
-                <option value="marzo">Marzo</option>
-                <option value="abril">Abril</option>
-                <option value="mayo">Mayo</option>
-                <option value="junio">Junio</option>
-                <option value="julio">Julio</option>
-                <option value="agosto">Agosto</option>
-                <option value="septiembre">Septiembre</option>
-                <option value="octubre">Octubre</option>
-                <option value="noviembre">Noviembre</option>
-                <option value="diciembre">Diciembre</option>
+                <option value="01">Enero</option>
+                <option value="02">Febrero</option>
+                <option value="03">Marzo</option>
+                <option value="04">Abril</option>
+                <option value="05">Mayo</option>
+                <option value="06">Junio</option>
+                <option value="07">Julio</option>
+                <option value="08">Agosto</option>
+                <option value="09">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
             </select><br>
             
             <label>Año</label>
@@ -152,7 +152,7 @@
           alert("Actividad eliminada correctamente.");
           window.location.href = "menu_admin.html";
         } else {
-          alert("Error: " + data.mensaje || "Error desconocido");
+          alert("Error: " + (data.mensaje || "Error desconocido"));
         }
       } catch (err) {
         console.error(err);

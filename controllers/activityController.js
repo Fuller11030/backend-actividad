@@ -68,6 +68,12 @@ exports.eliminarActividad = async (req, res) => {
       [nombre, fecha]
     );
 
+    console.log("Filas eliminadas:", result.rowCount);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ mensaje: "No se encontró la actividad con esa fecha" });
+    }
+
     res.json({ mensaje: 'Actividad eliminada correctamente' });
   } catch (err) {
     console.error("Error al eliminar actividad:", err.message || err);
