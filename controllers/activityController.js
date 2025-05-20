@@ -67,9 +67,10 @@ exports.eliminarActividad = async (req, res) => {
       [nombre, fecha]
     );
 
-    res.json({ mensaje: 'Actividade eliminada' });
+    res.json({ mensaje: 'Actividad eliminada correctamente' });
   } catch (err) {
-    res.status(500).send(err);
+    console.error("Error al eliminar actividad:", err.message || err);
+    res.status(500).json({ mensaje: 'Error al eliminar actividad', error: err.message });
   }
 };
 

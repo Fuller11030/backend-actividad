@@ -9,7 +9,7 @@ router.post('/crear', activityController.crearActividad);
 router.put('/modificar', activityController.modificarActividad);
 
 //eliminar actividad (admin)
-router.delete('/eliminar', activityController.eliminarActividad);
+router.post('/eliminar-actividad', activityController.eliminarActividad);
 
 //aceptar actividad (empleado)
 router.post('/aceptar', activityController.aceptarActividad);

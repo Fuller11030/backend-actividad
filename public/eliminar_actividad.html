@@ -139,8 +139,8 @@
       if (!confirmacion) return;
 
       try {
-        const res = await fetch("https://backend-actividad-fvub.onrender.com/api/activities/eliminar", {
-          method: "DELETE",
+        const res = await fetch("https://backend-actividad-fvub.onrender.com/api/activities/eliminar-actividad", {
+          method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
