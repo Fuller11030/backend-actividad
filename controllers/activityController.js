@@ -64,7 +64,7 @@ exports.eliminarActividad = async (req, res) => {
 
   try {
     const result = await pool.query(
-      `DELETE FROM actividades WHERE nombre = $1 AND DATE(fecha_limite) = $2`,
+      `DELETE FROM actividades WHERE nombre = $1 AND DATE fecha_limite::DATE = $2::DATE`,
       [nombre, fecha]
     );
 
