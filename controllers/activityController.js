@@ -59,11 +59,12 @@ exports.modificarActividad = async (req, res) => {
 
 // Eliminar actividad
 exports.eliminarActividad = async (req, res) => {
+  console.log("Datos recibidos para eliminar:", req.body);
   const { nombre, fecha } = req.body;
 
   try {
     await pool.query(
-      `DELETE FROM actividades WHERE nombre = $1 AND fecha_limite = $2`,
+      `DELETE FROM actividades WHERE nombre = $1 AND DATE(fecha_limite) = $2`,
       [nombre, fecha]
     );
 

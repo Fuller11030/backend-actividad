@@ -152,7 +152,7 @@
           alert("Actividad eliminada correctamente.");
           window.location.href = "menu_admin.html";
         } else {
-          alert("Error: " + data.message);
+          alert("Error: " + data.mensaje || "Error desconocido");
         }
       } catch (err) {
         console.error(err);
