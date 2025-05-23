@@ -10,13 +10,14 @@
         </header>
         <div class="container">
             <div class="sidebar">
-                <br><button onclick="location.href='admin.html'">Volever al menú</button><br>
+                <br><button onclick="location.href='admin.html'">Volver al menú</button><br>
                 <button onclick="location.href='agregar_usuario.html'">Crear nuveo usuario</button><br>
                 <button onclick="location.href='crear_actividad.html'">Crear nueva actividad</button><br>
                 <button onclick="location.href='Modificar_actividades.html'">Modificar actividades</button><br>
                 <button onclick="location.href='eliminar_actividad.html'">Eliminar actividad</button><br>
                 <button onclick="location.href='monitorear_actividad'">Monitorear progreso</button><br>
-                <button onclick="location.href='generar_reporte.html'">Generar reporte de actividades</button>
+                <button onclick="location.href='generar_reporte.html'">Generar reporte de actividades</button><br>
+                <button onclick="cerrarSesion()">Cerrar sesión</button>
             </div>
             <div class="main">
                 <label for="nombre">Ingrese el nombre:</label>
@@ -44,7 +45,7 @@
                 <input type="password" id="contrasena" required>
 
                 <div class="buttons">
-                    <button onclick="crearUsuario()">Confirmar creación de usario</button>
+                    <button onclick="crearUsuario()">Confirmar creación de usuario</button>
                     <button onclick="location.reload()">Cancelar</button>
                 </div>
             </div>
@@ -60,6 +61,13 @@
                 window.location.href = 'inicio_sesion.html'
             }
         });
+
+        function cerrarSesion() {
+        localStorage.removeItem("token");
+        localStorage.removeItem("nombre");
+        localStorage.removeItem("rol");
+        location.href = "inicio_sesion.html";
+    }
 
         async function crearUsuario() {
             const nombre = document.getElementById("nombre").value.trim();

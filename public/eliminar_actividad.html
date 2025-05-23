@@ -17,7 +17,8 @@
             <button onclick="location.href='Modificar_actividades.html'">Modificar actividades</button><br>
             <button onclick="location.href='eliminar_actividad.html'">Eliminar actividades</button><br>
             <button onclick="location.href='monitorear_actividad.html'">Monitorear progreso</button><br>
-            <button onclick="location.href='generar_reporte.html'">Generar reporte de actividades</button>
+            <button onclick="location.href='generar_reporte.html'">Generar reporte de actividades</button><br>
+            <button onclick="cerrarSesion()">Cerrar sesión</button>
         </div>
         <div class="main">
             <label for="actividad">Nombre de la actividad</label>
@@ -25,7 +26,7 @@
 
         <br><br><div class="buttons">
             <button onclick="location.reload()">Cancelar</button>
-            <button onclick="eliminarActividad()">aceptar y elimnar</button>
+            <button onclick="eliminarActividad()">Elimnar</button>
         </div>
         </div>
     </div>
@@ -72,6 +73,13 @@
         console.error(err);
         alert("Error de conexión con el servidor.");
       }
+    }
+
+    function cerrarSesion() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("rol");
+      localStorage.removeItem("nombre");
+      window.location.href = "inicio_sesion.html";
     }
   </script>
     </body>
