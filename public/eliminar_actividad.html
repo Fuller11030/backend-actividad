@@ -21,37 +21,56 @@
             <button onclick="cerrarSesion()">Cerrar sesión</button>
         </div>
         <div class="main">
-            <label for="actividad">Nombre de la actividad</label>
-            <input type="text" id="actividad"><br><br>
-
-        <br><br><div class="buttons">
-            <button onclick="location.reload()">Cancelar</button>
-            <button onclick="eliminarActividad()">Elimnar</button>
-        </div>
+            <h3>Lista de actividades disponibles:</h3>
+            <div id="listaActividades">
+              <p>Cargando actividades...</p>
+            </div>
         </div>
     </div>
 
     <script>
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
       const token = localStorage.getItem('token');
       const rol = localStorage.getItem("rol");
 
       if (!token || rol !== 'Administrador') {
-        alert('Acceso denegado. Debes iniciar sesión como administrador.');
+        alert('Acceso denegado. Debes inciar sesión como administrador.');
         window.location.href = 'inicio_sesion.html';
-      }
-    });
-
-    async function eliminarActividad() {
-      const nombre = document.getElementById("actividad").value.trim();
-
-      if (!nombre) {
-        alert("Debes escribir el nombre de la actividad.");
         return;
       }
 
-      const confirmacion = confirm(`¿Estás seguro de eliminar la actividad "${nombre}"?`);
-      if (!confirmacion) return;
+      try {
+        const res = await fetch("https://backend-actividad-fvub.onrender.com/api/activities/todas");
+        const actividades = await res.json();
+        const contenedor = document.getElementById("listaActividades");
+        contenedor.innerHTML = "";
+
+        if (actividades.length === 0) {
+          contenedor.innerHTML = "<p>No hay actividades disponibles.</p>";
+          return;
+        }
+
+        actividades.forEach(act => {
+          const div = document.createElement("div");
+          div.innerHTML = `
+          <h4>${act.nombre}</h4>
+            <p><strong>Descripción:</strong> ${act.descripcion}</p>
+            <p><strong>Empleado:</strong> ${act.empleado || "Sin asignar"}</p>
+            <p><strong>Fecha límite:</strong> ${act.fecha_limite.split('T')[0]}</p>
+            <button onclick="eliminarActividad('${act.nombre}')">Eliminar</button>
+            <hr>
+            `;
+            contenedor.appendChild(div);
+        });
+      } catch (err) {
+        console.error("Error al obtener actividades:", err);
+        alert("Error al obtener actividades del servidor.");
+      }
+    });
+
+    async function eliminarActividad(nombre) {
+      const confirmar = confirm(`¿Deseas eliminar la actividad "${nombre}"?`);
+      if (!confirmar) return;
 
       try {
         const res = await fetch("https://backend-actividad-fvub.onrender.com/api/activities/eliminar-actividad", {
@@ -63,17 +82,18 @@
         });
 
         const data = await res.json();
+
         if (res.ok) {
           alert("Actividad eliminada correctamente.");
-          window.location.href = "admin.html";
+          location.reload();
         } else {
-          alert("Error: " + (data.mensaje || "Error desconocido"));
+          alert("Error: " + (data.mensaje || "No se pudo eliminar."));
         }
-      } catch (err) {
-        console.error(err);
-        alert("Error de conexión con el servidor.");
+        } catch (err) {
+          console.error("Error al eliminar:", err);
+          alert("No se pudo conectar con el servidor.");
+        }
       }
-    }
 
     function cerrarSesion() {
       localStorage.removeItem("token");

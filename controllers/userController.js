@@ -10,6 +10,13 @@ exports.crearUsuario = async (req, res) => {
   }
 
   try {
+    const tieneMayuscula = /[A-Z]/.test(contrasena);
+    const tieneDosNumeros = (contrasena.match(/\d/g) || []).length >= 2;
+
+    if (!tieneMayuscula || !tieneDosNumeros) {
+      return res.status(400).json({ mensaje: 'La contraseña debe tener al menos una letra mayúscula y dos números.' });
+    }
+    
     const hash = await bcrypt.hash(contrasena, 10);
 
     const sql = `
