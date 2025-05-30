@@ -66,111 +66,124 @@
         </div>
 
         <script>
-        document.addEventListener("DOWContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", () => {
             const token = localStorage.getItem('token');
-            const rol = localStorage.getItem("rol");
+        const rol = localStorage.getItem("rol");
 
-            if (!token || rol !== 'Administrador') {
-                alert('Acceso denegado. Debes iniciar sesión como administrador.');
-                window.location.href = 'inicio_sesion.html';
-            }
-
-            const inputs = ["nombre", "telefono", "calle", "colonia", "numero", "email", "rol", "area"];
-            inputs.forEach(id => {
-                document.getElementById(id).addEventListener("input", validarCamposPrevios);
-            });
-        });
-
-        function validarCamposPrevios() {
-            const nombre = document.getElementById("nombre").value.trim();
-            const telefono = document.getElementById("telefono").value.trim();
-            const calle = document.getElementById("calle").value.trim();
-            const colonia = document.getElementById("colonia").value.trim();
-            const numero = document.getElementById("numero").value.trim();
-            const email = document.getElementById("email").value.trim();
-            const rol = document.getElementById("rol").value.trim();
-            const area = document.getElementById("area").value.trim();
-
-            const camposLlenos = nombre && telefono && calle && colonia && numero && email && rol && area;
-
-            const usuarioInput = document.getElementById("usuario");
-            const contrasenaInput = document.getElementById("contrasena");
-
-            if (camposLlenos) {
-                usuarioInput.disabled = false;
-                contrasenaInput.disabled = false;
-            } else {
-                usuarioInput.disabled = true;
-                contrasenaInput.disabled = true;
-                usuarioInput.value = "";
-                contrasenaInput.value = "";
-            }
+        if (!token || rol !== 'Administrador') {
+            alert('Acceso denegado. Debes iniciar sesión como administrador.');
+            window.location.href = 'inicio_sesion.html';
         }
 
-        function cerrarSesion() {
+        const inputs = ["nombre", "telefono", "calle", "colonia", "numero", "email", "rol", "area"];
+        inputs.forEach(id => {
+            const campo = document.getElementById(id);
+            if (campo) {
+                campo.addEventListener("input", validarCamposPrevios);
+            }
+        });
+
+        validarCamposPrevios(); // Para verificar en cuanto cargue la página
+    });
+
+    function validarCamposPrevios() {
+        const nombre = document.getElementById("nombre")?.value.trim();
+        const telefono = document.getElementById("telefono")?.value.trim();
+        const calle = document.getElementById("calle")?.value.trim();
+        const colonia = document.getElementById("colonia")?.value.trim();
+        const numero = document.getElementById("numero")?.value.trim();
+        const email = document.getElementById("email")?.value.trim();
+        const rol = document.getElementById("rol")?.value.trim();
+        const area = document.getElementById("area")?.value.trim();
+
+        const camposLlenos = nombre && telefono && calle && colonia && numero && email && rol && area;
+
+        const usuarioInput = document.getElementById("usuario");
+        const contrasenaInput = document.getElementById("contrasena");
+
+        if (camposLlenos) {
+            usuarioInput.disabled = false;
+            contrasenaInput.disabled = false;
+        } else {
+            usuarioInput.disabled = true;
+            contrasenaInput.disabled = true;
+            usuarioInput.value = "";
+            contrasenaInput.value = "";
+        }
+    }
+
+    function cerrarSesion() {
         localStorage.removeItem("token");
         localStorage.removeItem("nombre");
         localStorage.removeItem("rol");
         location.href = "inicio_sesion.html";
     }
 
-        async function crearUsuario() {
-            const nombre = document.getElementById("nombre").value.trim();
-            const telefono = document.getElementById("telefono").value.trim();
-            const calle = document.getElementById("calle").value.trim();
-            const colonia = document.getElementById("colonia").value.trim();
-            const numero = document.getElementById("numero").value.trim();
-            const email = document.getElementById("email").value.trim();
-            const rol = document.getElementById("rol").value;
-            const area = document.getElementById("area").value.trim();
-            const usuarioInput = document.getElementById("usuario").value.trim();
-            const contrasenaInput = document.getElementById("contrasena").value.trim();
+    async function crearUsuario() {
+        const nombre = document.getElementById("nombre").value.trim();
+        const telefono = document.getElementById("telefono").value.trim();
+        const calle = document.getElementById("calle").value.trim();
+        const colonia = document.getElementById("colonia").value.trim();
+        const numero = document.getElementById("numero").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const rol = document.getElementById("rol").value.trim();
+        const area = document.getElementById("area").value.trim();
+        const usuario = document.getElementById("usuario").value.trim();
+        const contrasena = document.getElementById("contrasena").value.trim();
 
-            const direccion = `${calle}, ${colonia}, ${numero}`;
+        const direccion = `${calle}, ${colonia}, ${numero}`;
 
-            if (!/^\d{10}$/.test(telefono)) {
-                alert("El teléfono debe tener exactamente 10 números.");
-                return;
-            }
-
-            const tieneMayuscula = /[A-Z]/.test(contrasena);
-            const tieneDosNumeros = (contrasena.match(/\d/g) || []).length >= 2;
-
-            if (!tieneMayuscula || !tieneDosNumeros) {
-                alert("La contraseña debe tener al menos una letra mayúscula y dos números.");
-                return;
-            }
-
-            try {
-                const response = await fetch("https://backend-actividad-fvub.onrender.com/api/users/crear", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        nombre,
-                        telefono,
-                        direccion,
-                        rol,
-                        area,
-                        usuario,
-                        contrasena
-                    })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    alert("Usuario creado exitosamente.");
-                    window.location.href = "admin.html";
-                } else {
-                    alert("Error: " + (data.message || "No se pudo crear el usuario"));
-                }
-            } catch (error) {
-                console.error("Error al crear usuario:", error);
-                alert("Error de conexión al servidor.");
-            }
+        if (!/^\d{10}$/.test(telefono)) {
+            alert("El teléfono debe tener exactamente 10 números.");
+            return;
         }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            alert("Correo electrónico inválido.");
+            return;
+        }
+
+        const tieneMayuscula = /[A-Z]/.test(contrasena);
+        const tieneDosNumeros = (contrasena.match(/\d/g) || []).length >= 2;
+
+        if (!tieneMayuscula || !tieneDosNumeros) {
+            alert("La contraseña debe tener al menos una letra mayúscula y dos números.");
+            return;
+        }
+
+        try {
+            const response = await fetch("https://backend-actividad-fvub.onrender.com/api/users/crear", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    nombre,
+                    telefono,
+                    email,
+                    calle,
+                    colonia,
+                    numero,
+                    rol,
+                    area,
+                    usuario,
+                    contrasena
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Usuario creado exitosamente.");
+                window.location.href = "admin.html";
+            } else {
+                alert("Error: " + (data.message || "No se pudo crear el usuario"));
+            }
+        } catch (error) {
+            console.error("Error al crear usuario:", error);
+            alert("Error de conexión al servidor.");
+        }
+    }
     </script>
     </body>
 </html>
