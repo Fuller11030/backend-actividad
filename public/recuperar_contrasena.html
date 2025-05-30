@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Recuperar contraseña</title>
+        <link rel="stylesheet" href="estilos.css">
+    </head>
+    <body>
+        <header>
+            <h1>Recuperar contraseña</h1>
+        </header>
+        <div class="container">
+            <div class="main">
+                <div class="panel-central">
+                    <form id="loginForm" style="width: 100%;">
+                <label for="usuario">Nombre de usuario:</label>
+                <input type="text" id="usuario" required>
+                
+                <label for="nuevaContrasena">Nueva contraseña:</label>
+                <input type="password" id="nuevaContrasena" placeholder="Al menos 1 mayúscula y 2 números" reuqired>
+                </form>
+                </div>
+
+                <div class="buttons">
+                    <button onclick="recuperar()">Actualizar contraseña</button>
+                    <button onclick="location.href='inicio_sesion.html'">Volver</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            async function recuperar() {
+                const usuario = document.getElementById('usuario').value.trim();
+                const nuevaContrasena = document.getElementById('nuevaContraseña').value;
+
+                if (!usuario || !nuevaContrasena) {
+                    alert("Completa todos los campos.");
+                    return;
+                }
+
+                try {
+                    const res = await fetch("https://backend-actividad-fvub.onrender.com/api/users/recuperar-contrasena", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ usuario, nuevaContrasena })
+                    });
+
+                    const data = await res.json();
+                    if (res.ok) {
+                        alert("Contrasela actualizada. Puedes iniciar sesión.");
+                        window.location.href = "inicio_sesion.html";
+                    } else {
+                        alert(data.mensaje || "Error al recuperar la contraseña.");
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("Error de conexión con el servidor.");
+                }
+            }
+        </script>
+    </body>
+</html>

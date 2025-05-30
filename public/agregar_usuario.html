@@ -6,7 +6,7 @@
     </head>
     <body>
         <header>
-            <h1>Agregue un nuevo usuario</h1>
+            <h1>Panel administrador - Crear nuevo usuario</h1>
         </header>
         <div class="container">
             <div class="sidebar">
@@ -21,28 +21,42 @@
             </div>
             <div class="main">
                 <label for="nombre">Ingrese el nombre:</label>
-                <input type="text" id="nombre" required>
+                <input type="text" id="nombre" class="campo-largo" placeholder="Empiece por apellidos y despues nombre" required>
 
                 <label for="nombre">Teléfono:</label>
-                <input type="text" id="telefono" required>
+                <input type="text" id="telefono" class="campo-largo" placeholder="10 digitos, sin espacios" required>
 
-                <label for="direccion">Dirección:</label>
-                <input type="text" id="direccion" required>
+                <label for="email">Correo electrónico:</label>
+                <input type="email" id="email" class="campo-largo" required>
+
+                <label>Dirección:</label>
+                <input type="text" id="Calle" class="campo-largo" placeholder="Calle" required>
+                <input type="text" id="Colonia" class="campo-largo" placeholder="Colonia" required>
+                <input type="text" id="Número" class="campo-corto" placeholder="Número" required>
                 
                 <label for="rol">Asigne un rol:</label>
-                <select id="rol">
+                <select id="rol" class="campo-mediano" required>
                     <option>Administrador</option>
                     <option>Empleado</option>
                     </select>
-
+                
                 <label for="area">Área perteneciente:</label>
-                <input type="text" id="area" required>
+                <select id="area" class="campo-mediano" required>
+                    <option value="">Seleccione un área</option>
+                    <option value="gerencia">Gerencia</option>
+                    <option value="rh">Recursos humanos</option>
+                    <option value="rf">Recursos financieros</option>
+                    <option value="sg">Servicos generales</option>
+                    <option value="mantenimiento">Mantenimiento</option>
+                    <option value="limpieza">Consergeria</option>
+                    <option value="oficina">Oficina</option>
+                </select>
 
                 <label for="usuario">Nombre de usuario:</label>
-                <input type="text" id="usuario" required>
+                <input type="text" id="usuario" class="campo-largo" placeholder="Ej: jlopez23 (minúsculas, sin espacios)" disabled required>
 
                 <label for="contrasena">Contraseña:</label>
-                <input type="password" id="contrasena" required>
+                <input type="password" id="contrasena" class="campo-largo" placeholder="Al menos 1 mayúscula y 2 números" disabled required>
 
                 <div class="buttons">
                     <button onclick="crearUsuario()">Confirmar creación de usuario</button>
@@ -58,9 +72,40 @@
 
             if (!token || rol !== 'Administrador') {
                 alert('Acceso denegado. Debes iniciar sesión como administrador.');
-                window.location.href = 'inicio_sesion.html'
+                window.location.href = 'inicio_sesion.html';
             }
+
+            const inputs = ["nombre", "telefono", "calle", "colonia", "numero", "email", "rol", "area"];
+            inputs.forEach(id => {
+                document.getElementById(id).addEventListener("input", validarCamposPrevios);
+            });
         });
+
+        function validarCamposPrevios() {
+            const nombre = document.getElementById("nombre").value.trim();
+            const telefono = document.getElementById("telefono").value.trim();
+            const calle = document.getElementById("calle").value.trim();
+            const colonia = document.getElementById("colonia").value.trim();
+            const numero = document.getElementById("numero").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const rol = document.getElementById("rol").value.trim();
+            const area = document.getElementById("area").value.trim();
+
+            const camposLlenos = nombre && telefono && calle && colonia && numero && email && rol && area;
+
+            const usuarioInput = document.getElementById("usuario");
+            const contrasenaInput = document.getElementById("contrasena");
+
+            if (camposLlenos) {
+                usuarioInput.disabled = false;
+                contrasenaInput.disabled = false;
+            } else {
+                usuarioInput.disabled = true;
+                contrasenaInput.disabled = true;
+                usuarioInput.value = "";
+                contrasenaInput.value = "";
+            }
+        }
 
         function cerrarSesion() {
         localStorage.removeItem("token");
@@ -72,20 +117,19 @@
         async function crearUsuario() {
             const nombre = document.getElementById("nombre").value.trim();
             const telefono = document.getElementById("telefono").value.trim();
-            const direccion = document.getElementById("direccion").value.trim();
+            const calle = document.getElementById("calle").value.trim();
+            const colonia = document.getElementById("colonia").value.trim();
+            const numero = document.getElementById("numero").value.trim();
+            const email = document.getElementById("email").value.trim();
             const rol = document.getElementById("rol").value;
             const area = document.getElementById("area").value.trim();
-            const usuario = document.getElementById("usuario").value.trim();
-            const contrasena = document.getElementById("contrasena").value.trim();
+            const usuarioInput = document.getElementById("usuario").value.trim();
+            const contrasenaInput = document.getElementById("contrasena").value.trim();
 
-            // Validar campos
-            if (!nombre || !telefono || !direccion || !rol || !area || !usuario || !contrasena) {
-                alert("Por favor completa todos los campos.");
-                return;
-            }
+            const direccion = `${calle}, ${colonia}, ${numero}`;
 
             if (!/^\d{10}$/.test(telefono)) {
-                alert("El teléfono debe tener exactamente 10 dígitos numéricos.");
+                alert("El teléfono debe tener exactamente 10 números.");
                 return;
             }
 

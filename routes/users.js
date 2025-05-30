@@ -11,4 +11,7 @@ router.get('/todos', userController.obtenerUsuarios);
 //obtner un usuario por nombre
 router.get('/buscar/:nombre', userController.buscarPorNombre);
 
+//recuperar contraseña
+router.post('/recuperar-contrasena', userController.recuperarContrasena);
+
 module.exports = router;
