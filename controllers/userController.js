@@ -25,6 +25,15 @@ exports.crearUsuario = async (req, res) => {
   }
 
   try {
+    if (rol === 'Administrador') {
+      const result = await pool.query(`SELECT COUNT(*) FROM usuarios WHERE rol = 'Administrador'`);
+      const cantidadAdmins = parseInt(result.rows[0].count);
+
+      if (cantidadAdmins >= 10) {
+        return res.status(403).json({mensaje: 'Ya hay suficientes administradores registrados (maximo 10).' });
+      }
+    }
+    
     const hash = await bcrypt.hash(contrasena, 10);
 
     const sql = `
