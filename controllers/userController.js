@@ -1,6 +1,6 @@
 const pool = require('../config/db');
 const bcrypt = require('bcryptjs');
-const enviarCorreo = require('..config/mailer');
+const enviarCorreo = require('../config/mailer');
 
 // Registrar nuevo usuario (solo por admin)
 exports.crearUsuario = async (req, res) => {
