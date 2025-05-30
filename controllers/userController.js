@@ -43,7 +43,7 @@ exports.crearUsuario = async (req, res) => {
       <p>Por favor guarda esta información.</p>
       `;
 
-      await enviarCorreo(email, "Credenciales de acceso - Sistema de actividades", mensaje);
+      await enviarCorreo(email, "Credenciales de acceso - Gedact", mensaje);
 
     res.json({ mensaje: 'Usuario creado exitosamente' });
   } catch (err) {

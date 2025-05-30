@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
 
 function enviarCorreo(destino, asunto, mensajeHtml) {
     const mailOption = {
-        from: `"Sistema de actividades" <${process.env.EMAIL_USER}>`,
+        from: `"Gedact" <${process.env.EMAIL_USER}>`,
         to: destino,
         subject: asunto,
         html: mensajeHtml
