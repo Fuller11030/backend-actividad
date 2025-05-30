@@ -17,7 +17,7 @@
                 <input type="text" id="usuario" required>
                 
                 <label for="nuevaContrasena">Nueva contraseña:</label>
-                <input type="password" id="nuevaContrasena" placeholder="Al menos 1 mayúscula y 2 números" class="campo-largo" reuqired>
+                <input type="password" id="nuevaContrasena" placeholder="Al menos 1 mayúscula y 2 números" class="campo-largo" required>
                 </form>
                 </div>
 
@@ -31,10 +31,20 @@
         <script>
             async function recuperar() {
                 const usuario = document.getElementById('usuario').value.trim();
-                const nuevaContrasena = document.getElementById('nuevaContraseña').value;
+                const nuevaContrasena = document.getElementById('nuevaContraseña').value.trim();
 
                 if (!usuario || !nuevaContrasena) {
                     alert("Completa todos los campos.");
+                    return;
+                }
+                
+                //validación: al menos uuna mayúscula y dos números
+                const tieneMayuscula = /[A-Z]/.test(nuevaContrasena);
+                const numeros = nuevaContrasena.match(/\d/g);
+                const tieneDosNumeros = numeros && numeros.length >= 2;
+
+                if (!tieneMayuscula || !tieneDosNumeros) {
+                    alert("La contraseña debe tener al menos una mayúscula y dos números.");
                     return;
                 }
 
