@@ -36,6 +36,7 @@
                 
                 <label for="rol">Asigne un rol:</label>
                 <select id="rol" class="campo-mediano" required>
+                    <option value="">Seleccione un rol</option>
                     <option>Administrador</option>
                     <option>Empleado</option>
                     </select>
@@ -53,10 +54,10 @@
                 </select>
 
                 <label for="usuario">Nombre de usuario:</label>
-                <input type="text" id="usuario" class="campo-largo" placeholder="Ej: jlopez23 (minúsculas, sin espacios)" disabled required>
+                <input type="text" id="usuario" class="campo-largo" placeholder="Ej: jlopez23 (minúsculas, sin espacios)" required>
 
                 <label for="contrasena">Contraseña:</label>
-                <input type="password" id="contrasena" class="campo-largo" placeholder="Al menos 1 mayúscula y 2 números" disabled required>
+                <input type="password" id="contrasena" class="campo-largo" placeholder="Al menos 1 mayúscula y 2 números" required>
 
                 <div class="buttons">
                     <button onclick="crearUsuario()">Confirmar creación de usuario</button>
