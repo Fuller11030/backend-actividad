@@ -16,6 +16,11 @@ exports.crearUsuario = async (req, res) => {
     return res.status(400).json({ mensaje: 'Correo electrónico inválido.' });
   }
 
+  // Validar usuario con mayúscula
+  if (!/[A-Z]/.test(usuario)) {
+    return res.status(400).json({ mensaje: 'El nombre de usuario debe contener al menos una letra mayúscula.' });
+  }
+
   // Validar contraseña
   const tieneMayuscula = /[A-Z]/.test(contrasena);
   const tieneDosNumeros = (contrasena.match(/\d/g) || []).length >= 2;
