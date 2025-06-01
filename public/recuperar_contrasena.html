@@ -38,7 +38,7 @@
                     return;
                 }
                 
-                //validación: al menos uuna mayúscula y dos números
+                //validación: al menos una mayúscula y dos números
                 const tieneMayuscula = /[A-Z]/.test(nuevaContrasena);
                 const numeros = nuevaContrasena.match(/\d/g);
                 const tieneDosNumeros = numeros && numeros.length >= 2;
@@ -57,7 +57,7 @@
 
                     const data = await res.json();
                     if (res.ok) {
-                        alert("Contrasela actualizada. Puedes iniciar sesión.");
+                        alert("Contraseña actualizada. Puedes iniciar sesión.");
                         window.location.href = "inicio_sesion.html";
                     } else {
                         alert(data.mensaje || "Error al recuperar la contraseña.");
