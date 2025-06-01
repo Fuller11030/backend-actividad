@@ -32,29 +32,47 @@ exports.crearActividad = async (req, res) => {
 exports.modificarActividad = async (req, res) => {
   const { nombre, nuevaDescripcion, nuevaFecha, nuevoEmpleado } = req.body;
 
-  try {
-    const empleadoRes = await pool.query(
-      `SELECT id FROM usuarios WHERE nombre = $1 AND rol = 'Empleado'`,
-      [nuevoEmpleado]
-    );
+    try {
+      const actividadRes = await pool.query(
+        `SELECT id FROM actividades WHERE nombre =$1`,
+        [nombre] 
+      );
 
-    if (empleadoRes.rows.length === 0) {
-      return res.status(400).json({ mensaje: 'Empleado no encontrado' });
-    }
+      if (actividadRes.rows.length === 0) {
+        return res.status(404).json({ mensaje: 'La actividad no existe.' });
+      }
+      
+      const empleadoRes = await pool.query(
+        `SELECT id FROM usuarios WHERE nombre = $1 AND rol = 'Empleado'`,
+        [nuevoEmpleado]
+      );
 
-    const empleado_id = empleadoRes.rows[0].id;
+      if (empleadoRes.rows.length === 0) {
+        return res.status(400).json({ mensaje: 'Empleado no encontrado' });
+      }
 
-    await pool.query(
-      `UPDATE actividades
-      SET descripcion = $1, fecha_limite = $2, empleado_id = $3
-      WHERE nombre = $4`,
-      [nuevaDescripcion, nuevaFecha, empleado_id, nombre]
-    );
+      const empleado_id = empleadoRes.rows[0].id;
+
+      const hoy = new Date();
+      const fechaIngresada = new Date(nuevaFecha);
+
+      hoy.setHours(0, 0, 0, 0);
+
+      if (fechaIngresada < hoy) {
+        return res.status(400).json({ mensaje: 'La fecha ingresada ya pasó. Elige una fecha válida.' });
+      }
+
+      await pool.query(
+        `UPDATE actividades
+        SET descripcion = $1, fecha_limite = $2, empleado_id = $3
+        WHERE nombre = $4`,
+        [nuevaDescripcion, nuevaFecha, empleado_id, nombre]
+      );
  
-    res.json({ mensaje: 'Actividad modificada' });
-  } catch (err) {
-    res.status(500).send(err);
-  }
+      res.json({ mensaje: 'Actividad modificada' });
+      } catch (err) {
+      res.status(500).send(err);
+    }
 };
 
 // Eliminar actividad

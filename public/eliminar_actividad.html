@@ -34,7 +34,7 @@
       const rol = localStorage.getItem("rol");
 
       if (!token || rol !== 'Administrador') {
-        alert('Acceso denegado. Debes inciar sesión como administrador.');
+        alert('Acceso denegado. Debes iniciar sesión como administrador.');
         window.location.href = 'inicio_sesion.html';
         return;
       }
