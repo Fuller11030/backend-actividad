@@ -9,7 +9,7 @@ exports.crearReporte = async (req, res) => {
     const result = await pool.query('SELECT id FROM actividades WHERE nombre = $1', [actividadNombre]);
 
     if (result.rows.length === 0) {
-      return res.status(400).json({ mensaje: 'Actividad no econtrada' });
+      return res.status(400).json({ mensaje: 'Actividad no encontrada' });
     }
 
     const actividad_id = result.rows[0].id;
