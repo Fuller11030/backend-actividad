@@ -4,7 +4,7 @@ require('dotenv').config();
 // Configuración explícita y segura para Gmail
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
-    port: 465,               // Puerto seguro SSL (El más fiable en la nube)
+    port: 587,               // Puerto seguro SSL (El más fiable en la nube)
     secure: true,            // Usar conexión segura
     auth: {
         user: process.env.EMAIL_USER,
