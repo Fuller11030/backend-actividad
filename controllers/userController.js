@@ -35,7 +35,7 @@ exports.crearUsuario = async (req, res) => {
       const cantidadAdmins = parseInt(result.rows[0].count);
 
       if (cantidadAdmins >= 10) {
-        return res.status(403).json({mensaje: 'Ya hay suficientes administradores registrados (maximo 10).' });
+        return res.status(403).json({mensaje: 'Ya hay suficientes administradores registrados (máximo 10).' });
       }
     }
     
@@ -104,7 +104,7 @@ exports.recuperarContrasena = async (req, res) => {
   const { usuario, nuevaContrasena } = req.body;
 
   if (!usuario || !nuevaContrasena) {
-    return res.status(400).json({ mensaje: 'Debes de completar todos los campos.' });
+    return res.status(400).json({ mensaje: 'Debes completar todos los campos.' });
   }
 
   const tieneMayuscula = /[A-Z]/.test(nuevaContrasena);
