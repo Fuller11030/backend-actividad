@@ -15,11 +15,23 @@ const pool = new Pool({
   database: process.env.DB_NAME,
   ssl: {
     rejectUnauthorized: false
-  }
+  },
+  connectionTimeoutMillis: 5000,
+  idleTimeoutMillis: 30000
+});
+
+pool.on('error', (err, client) => {
+  console.error('Error inesperado en el cliente de la base de datos (inactivo)', err);
+});
+
+
+pool.connect()
+.then(client => { 
+  console.log('Conectado a la base de datos');
+  client.release();
+})
+.catch(err => {
+  console.error('Error al conectar a la base de datos:', err.message);
 });
 
 module.exports = pool;
-
-pool.connect()
-.then(() => console.log('Conectado a la base de datos'))
-.catch(err => console.error('Error al conectar a la base de datos:', err.message));

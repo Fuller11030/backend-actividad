@@ -47,21 +47,41 @@ exports.crearUsuario = async (req, res) => {
     `;
 
     await pool.query(sql, [ nombre, telefono, email, calle, colonia, numero, rol, area, usuario, hash]);
-
-    //enviar correo de confirmación
-    const mensaje = `
-      <h2>!Bienvenido/a ${nombre}!</h2>
-      <p>Tu cuenta ha sido creada correctamente.</p>
-      <p><strong>Usuario:</strong> ${usuario}</p>
-      <p><strong>Contraseña:</strong> ${contrasena}</p>
-      <p>Por favor guarda esta información.</p>
+//esto es nuevo
+    try {
+      console.log(`[INFO] Intentando enviar correo a: ${email}...`);
+      
+      const mensaje = `
+        <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+          <h2 style="color: #2c3e50;">¡Bienvenido/a ${nombre}!</h2>
+          <p>Tu cuenta en <strong>Gedact</strong> ha sido creada correctamente.</p>
+          <hr>
+          <p><strong>Usuario:</strong> ${usuario}</p>
+          <p><strong>Contraseña:</strong> ${contrasena}</p>
+          <hr>
+          <p style="font-size: 12px; color: #7f8c8d;">Por favor guarda esta información en un lugar seguro.</p>
+        </div>
       `;
 
       await enviarCorreo(email, "Credenciales de acceso - Gedact", mensaje);
+      console.log(`[EXITO] Correo enviado correctamente a ${email}`);
+      
+    } catch (errorCorreo) {
+      // Si falla el correo, lo mostramos en consola PERO NO detenemos el éxito del registro
+      console.error(`[ERROR CORREO] El usuario se creó, pero falló el envío del email:`, errorCorreo.message);
+    }
 
+    // Responder al cliente
     res.json({ mensaje: 'Usuario creado exitosamente' });
+
   } catch (err) {
-    console.error('Error al crear usuario:', err.message || err);
+    console.error('Error general al crear usuario:', err.message || err);
+    
+    // Si es error de duplicado (usuario ya existe)
+    if (err.code === '23505') {
+        return res.status(400).json({ mensaje: 'El nombre de usuario ya está registrado.' });
+    }
+
     res.status(500).json({
       mensaje: 'Error al crear usuario',
       error: err.message || err
