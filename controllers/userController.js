@@ -6,7 +6,9 @@ const enviarCorreo = require('../config/mailer');
 exports.crearUsuario = async (req, res) => {
   const { nombre, telefono, email, calle, colonia, numero, rol, area, usuario, contrasena } = req.body;
 
-  // Validar teléfono
+  // --- 1. VALIDACIONES ---
+  
+  // Validar teléfono (10 dígitos)
   if (!/^\d{10}$/.test(telefono)) {
     return res.status(400).json({ mensaje: 'Teléfono inválido. Debe tener exactamente 10 dígitos.' });
   }
@@ -16,12 +18,12 @@ exports.crearUsuario = async (req, res) => {
     return res.status(400).json({ mensaje: 'Correo electrónico inválido.' });
   }
 
-  // Validar usuario con mayúscula
+  // Validar usuario (al menos una mayúscula)
   if (!/[A-Z]/.test(usuario)) {
     return res.status(400).json({ mensaje: 'El nombre de usuario debe contener al menos una letra mayúscula.' });
   }
 
-  // Validar contraseña
+  // Validar contraseña (mayúscula y 2 números)
   const tieneMayuscula = /[A-Z]/.test(contrasena);
   const tieneDosNumeros = (contrasena.match(/\d/g) || []).length >= 2;
 
@@ -30,28 +32,37 @@ exports.crearUsuario = async (req, res) => {
   }
 
   try {
+    // Verificar límite de administradores
     if (rol === 'Administrador') {
       const result = await pool.query(`SELECT COUNT(*) FROM usuarios WHERE rol = 'Administrador'`);
       const cantidadAdmins = parseInt(result.rows[0].count);
 
       if (cantidadAdmins >= 10) {
-        return res.status(403).json({mensaje: 'Ya hay suficientes administradores registrados (máximo 10).' });
+        return res.status(403).json({ mensaje: 'Ya hay suficientes administradores registrados (máximo 10).' });
       }
     }
-    
+
+    // --- 2. PREPARAR DATOS ---
+    // Encriptar contraseña
     const hash = await bcrypt.hash(contrasena, 10);
 
+    // --- 3. GUARDAR EN BASE DE DATOS (CRÍTICO) ---
+    // Usamos await aquí porque si falla la BD, sí debemos avisar el error.
     const sql = `
       INSERT INTO usuarios (nombre, telefono, email, calle, colonia, numero, rol, area, usuario, contrasena)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
     `;
 
-    await pool.query(sql, [ nombre, telefono, email, calle, colonia, numero, rol, area, usuario, hash]);
-//esto es nuevo
-    try {
-      console.log(`[INFO] Intentando enviar correo a: ${email}...`);
-      
-      const mensaje = `
+    await pool.query(sql, [nombre, telefono, email, calle, colonia, numero, rol, area, usuario, hash]);
+
+    // --- 4. RESPONDER AL CLIENTE (INMEDIATAMENTE) ⚡ ---
+    // Esto hace que la página no se congele. Respondemos éxito aunque el correo no haya salido aún.
+    res.status(201).json({ mensaje: 'Usuario creado exitosamente. El correo llegará en breve.' });
+
+    // --- 5. ENVIAR CORREO EN SEGUNDO PLANO (SIN AWAIT) 📨 ---
+    console.log(`[FONDO] Iniciando proceso de envío de correo a ${email}...`);
+    
+    const mensajeHtml = `
         <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
           <h2 style="color: #2c3e50;">¡Bienvenido/a ${nombre}!</h2>
           <p>Tu cuenta en <strong>Gedact</strong> ha sido creada correctamente.</p>
@@ -61,35 +72,33 @@ exports.crearUsuario = async (req, res) => {
           <hr>
           <p style="font-size: 12px; color: #7f8c8d;">Por favor guarda esta información en un lugar seguro.</p>
         </div>
-      `;
+    `;
 
-      await enviarCorreo(email, "Credenciales de acceso - Gedact", mensaje);
-      console.log(`[EXITO] Correo enviado correctamente a ${email}`);
-      
-    } catch (errorCorreo) {
-      // Si falla el correo, lo mostramos en consola PERO NO detenemos el éxito del registro
-      console.error(`[ERROR CORREO] El usuario se creó, pero falló el envío del email:`, errorCorreo.message);
-    }
-
-    // Responder al cliente
-    res.json({ mensaje: 'Usuario creado exitosamente' });
+    // No usamos 'await'. Si falla, se registra en el log pero el usuario no se entera.
+    enviarCorreo(email, "Credenciales de acceso - Gedact", mensajeHtml)
+      .then(() => console.log(`[EXITO] Correo entregado correctamente a ${email}`))
+      .catch(err => console.error(`[ERROR CORREO] Falló el envío a ${email}, pero el usuario YA está registrado. Error: ${err.message}`));
 
   } catch (err) {
     console.error('Error general al crear usuario:', err.message || err);
     
-    // Si es error de duplicado (usuario ya existe)
+    // Manejo de error específico: Usuario duplicado
     if (err.code === '23505') {
+        // A veces el error no especifica qué campo, pero suele ser el usuario
         return res.status(400).json({ mensaje: 'El nombre de usuario ya está registrado.' });
     }
 
-    res.status(500).json({
-      mensaje: 'Error al crear usuario',
-      error: err.message || err
-    });
+    // Si ya respondimos (res.json), no podemos responder de nuevo, así que validamos
+    if (!res.headersSent) {
+        res.status(500).json({
+            mensaje: 'Error al crear usuario',
+            error: err.message || err
+        });
+    }
   }
 };
 
-// Obtener todos los usuarios (actualizado con email y datos separados)
+// Obtener todos los usuarios
 exports.obtenerUsuarios = async (req, res) => {
   try {
     const result = await pool.query(`
@@ -98,7 +107,7 @@ exports.obtenerUsuarios = async (req, res) => {
     `);
     res.json(result.rows);
   } catch (err) {
-    res.status(500).json({ mensaje: 'Error al obtener usuarios', error: err });
+    res.status(500).json({ mensaje: 'Error al obtener usuarios', error: err.message });
   }
 };
 
@@ -115,11 +124,11 @@ exports.buscarPorNombre = async (req, res) => {
 
     res.json(result.rows);
   } catch (err) {
-    res.status(500).json({ mensaje: 'Error en la búsqueda', error: err });
+    res.status(500).json({ mensaje: 'Error en la búsqueda', error: err.message });
   }
 };
 
-//recuperar contraseña
+// Recuperar contraseña
 exports.recuperarContrasena = async (req, res) => {
   const { usuario, nuevaContrasena } = req.body;
 
